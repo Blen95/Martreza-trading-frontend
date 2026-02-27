@@ -17,7 +17,7 @@ export default function Footer() {
         {/* Company Info - center */}
         <div className="flex flex-col items-center text-center gap-2">
           <Title order={5} className="text-white">Martreza Trading plc.</Title>
-          <Text className="text-gray-300">Email: info@beka.com</Text>
+          <Text className="text-gray-300">Email: info@martreza.com</Text>
 
           {/* Map Link */}
           <Anchor
