@@ -1,3 +1,4 @@
+import FloatingIcons from "../components/Floatingicons";
 import ConsultancyHighlight from "../components/Home/Consultancyhighlights";
 import CoreSolutions from "../components/Home/CoreSolutions";
 import ExcessMaterialsSection from "../components/Home/ExcessMaterials";
@@ -16,6 +17,7 @@ export default function Home() {
       <HowItWorks/>
       <WhyChooseUs/>
       <FinalCTA/>
+      <FloatingIcons/>
     </>
   );
 }
