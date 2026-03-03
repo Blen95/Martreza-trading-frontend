@@ -8,6 +8,7 @@ import ceramicImg from "../assets/finishing.jpeg";
 import electricalImg from "../assets/Electrical Energy Company.jpeg";
 import sanitaryImg from "../assets/sanitary.jpeg";
 import location from"../assets/location.svg";
+import FloatingIcons from "../components/Floatingicons";
 export default function AboutPage() {
   return (
     <div className="bg-white text-gray-900">
@@ -177,7 +178,7 @@ export default function AboutPage() {
           </Grid>
         </Container>
       </section>
-
+<FloatingIcons/>
     </div>
   );
 }
