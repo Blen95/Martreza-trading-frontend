@@ -25,15 +25,15 @@ export default function HeroSection() {
             order={1}
             className="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight"
           >
-            Engineering Excellence.
+            Martreza Trading
           </Title>
 
           {/* Subheadline */}
           <Text
-            size="xl"
-            className="mt-4 font-semibold text-gray-100 leading-snug"
+            size="3xl"
+            className="mt-4 md:text-3xl font-bold text-gray-100 leading-snug"
           >
-            Imported Materials.
+            Engineering Excellence
           </Text>
 
           {/* Description */}
@@ -72,7 +72,7 @@ export default function HeroSection() {
           {/* Footer Note */}
           <Text size="sm" className="mt-8 text-gray-400">
             Consultancy with supply integration • Advance project-based imports • 
-            We also receive excess construction materials
+            Excess construction material intake
           </Text>
         </motion.div>
 

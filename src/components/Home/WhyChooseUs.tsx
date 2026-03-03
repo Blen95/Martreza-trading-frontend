@@ -2,7 +2,8 @@ import { Container, Title, Text, Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { IconCheck } from "@tabler/icons-react";
-
+import { useState } from "react";
+import RequestFormModal from "../RequestFormModal";
 const benefits = [
   "Direct Imported Materials",
   "Consultancy + Supply Integration",
@@ -12,7 +13,8 @@ const benefits = [
 
 export default function WhyChooseUs() {
   const navigate = useNavigate();
-
+  const [opened,setOpened]=useState(false)
+ 
   return (
     <section className="bg-white text-gray-900 py-24">
       <Container size="lg" className="relative z-10">
@@ -53,16 +55,20 @@ export default function WhyChooseUs() {
         </div>
 
         {/* CTA Button */}
-        <div className="text-center">
+       {/* <div className="text-center">
           <Button
             size="lg"
             radius="xl"
             className="bg-gray-900 text-white font-bold hover:bg-gray-800 transition-all"
-            onClick={() => navigate("/services")}
+            onClick={() => setOpened(true)}
           >
             Start Your Project With Confidence
           </Button>
-        </div>
+          <RequestFormModal
+          opened={opened}
+          onClose={()=> setOpened(false)}
+          type="procurement"/>
+        </div>*/}
       </Container>
     </section>
   );

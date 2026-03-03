@@ -1,10 +1,13 @@
 import { Container, Title, Text, Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import RequestFormModal from "../RequestFormModal";
+
 
 export default function FinalCTA() {
   const navigate = useNavigate();
-
+   const[opened,setOpened]=useState(false)
   return (
     <section className="bg-gradient-to-br from-[#0B1C2D] via-[#0F2438] to-[#111827] text-white py-24">
       <Container size="lg" className="relative z-10 text-center">
@@ -24,10 +27,14 @@ export default function FinalCTA() {
             size="lg"
             radius="xl"
             className="bg-white text-black font-bold hover:bg-gray-200 transition-all"
-            onClick={() => navigate("/contact")}
+            onClick={() => setOpened(true)}
           >
-            Request Consultation
+            Start Your Project With Confidence
           </Button>
+            <RequestFormModal
+                    opened={opened}
+                    onClose={()=> setOpened(false)}
+                    type="procurement"/>
         </motion.div>
       </Container>
     </section>

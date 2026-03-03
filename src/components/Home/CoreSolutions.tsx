@@ -5,20 +5,20 @@ const solutions = [
   {
     title: "Finishing Materials",
     description:
-      "Premium imported tiles, lighting, and fittings for high-quality finishes.",
-    image: "https://source.unsplash.com/400x300/?construction,interior",
+      "Premium imported tiles, lighting fixtures, and decorative fittings sourced from leading international manufacturers for superior quality and aesthetics.",
+    image: "src/assets/finishing.jpeg",
   },
   {
-    title: "Civil Services",
+    title: "Civil Construction Materials",
     description:
-      "Structural and civil work solutions with project-based material supply.",
-    image: "https://source.unsplash.com/400x300/?construction,building",
+      "High-grade imported concrete, steel, and other structural materials to support durable and long-lasting construction projects.",
+    image: "src/assets/constructionmaterial.jpeg",
   },
   {
-    title: "Electromechanical Works",
+    title: "Electrical & Mechanical Materials",
     description:
-      "Electrical and mechanical installations with integrated building solutions.",
-    image: "https://source.unsplash.com/400x300/?engineering,mechanical",
+      "Imported electrical components, wiring, and mechanical parts from trusted suppliers, ensuring safety, efficiency, and reliability in building infrastructure.",
+    image: "src/assets/Electrical Energy Company.jpeg",
   },
 ];
 

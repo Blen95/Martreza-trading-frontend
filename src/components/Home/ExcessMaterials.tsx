@@ -1,9 +1,12 @@
 import { Container, Title, Text, Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import RequestFormModal from "../RequestFormModal";
 
 export default function ExcessMaterialsSection() {
   const navigate = useNavigate();
+  const [opened, setOpened] = useState(false);
 
   return (
     <section className="bg-gray-50 text-gray-900 py-24">
@@ -27,13 +30,19 @@ export default function ExcessMaterialsSection() {
           </Text>
 
           <Button
-            size="lg"
-            radius="xl"
-            className="bg-gray-900 text-white font-bold hover:bg-gray-800 transition-all"
-            onClick={() => navigate("/services")}
-          >
-            Sell Excess Materials
-          </Button>
+  size="lg"
+  radius="xl"
+  className="bg-gray-900 text-white font-bold hover:bg-gray-800 transition-all"
+  onClick={() => setOpened(true)}
+>
+  Sell Excess Materials
+</Button>
+
+<RequestFormModal
+  opened={opened}
+  onClose={() => setOpened(false)}
+  type="sell_excess"
+/>
         </motion.div>
 
         {/* Image / Illustration */}
@@ -45,7 +54,7 @@ export default function ExcessMaterialsSection() {
           className="flex-1"
         >
           <img
-            src="https://source.unsplash.com/500x400/?construction,materials"
+            src="src/assets/excess.jpeg"
             alt="Excess Materials"
             className="w-full rounded-lg shadow-lg object-cover"
           />

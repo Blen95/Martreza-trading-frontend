@@ -1,10 +1,13 @@
 import { Container, Title, Text, Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import RequestFormModal from "../RequestFormModal";
+
 
 export default function ConsultancyHighlight() {
   const navigate = useNavigate();
-
+  const[opened, setOpened]=useState(false)
   return (
     <section className="relative bg-gray-50 text-gray-900 py-24">
       <Container size="lg" className="relative z-10">
@@ -32,10 +35,15 @@ export default function ConsultancyHighlight() {
               size="lg"
               radius="xl"
               className="bg-gray-900 text-white font-bold hover:bg-gray-800 transition-all"
-              onClick={() => navigate("/services")}
+              onClick={() => setOpened(true)}
             >
               Start Your Project With Confidence
             </Button>
+            <RequestFormModal
+            opened={opened}
+            onClose={() => setOpened(false)}
+            type="consultation"
+          />
           </motion.div>
 
           {/* Image / Illustration */}
@@ -47,7 +55,7 @@ export default function ConsultancyHighlight() {
             className="flex-1"
           >
             <img
-              src="https://source.unsplash.com/500x400/?construction,consultancy"
+              src="src/assets/civil.jpeg"
               alt="Consultancy"
               className="w-full rounded-lg shadow-lg object-cover"
             />
