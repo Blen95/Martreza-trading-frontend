@@ -45,13 +45,13 @@ export default function Navbar() {
         </Menu.Target>
 
         <Menu.Dropdown>
-          <Menu.Item component={NavLink} to="/materials#finishing">
+          <Menu.Item component={NavLink} to="/materials/finishing">
             Finishing Construction
           </Menu.Item>
-          <Menu.Item component={NavLink} to="/materials#civil">
+          <Menu.Item component={NavLink} to="/materials/civil">
             Civil Construction
           </Menu.Item>
-          <Menu.Item component={NavLink} to="/materials#electro">
+          <Menu.Item component={NavLink} to="/materials/electro">
             Electro-Mechanical
           </Menu.Item>
         </Menu.Dropdown>
