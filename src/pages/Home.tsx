@@ -1,7 +1,23 @@
+import FloatingIcons from "../components/Floatingicons";
+import ConsultancyHighlight from "../components/Home/Consultancyhighlights";
+import CoreSolutions from "../components/Home/CoreSolutions";
+import ExcessMaterialsSection from "../components/Home/ExcessMaterials";
+import FinalCTA from "../components/Home/FinalCTA";
+import HeroSection from "../components/Home/HeroSection";
+import HowItWorks from "../components/Home/HowItWorks";
+import WhyChooseUs from "../components/Home/WhyChooseUs";
+
 export default function Home() {
   return (
-    <div className="bg-red-500 text-white text-5xl">
-  TEST
-</div>
+    <>
+      <HeroSection />
+      <CoreSolutions/>
+      <ConsultancyHighlight/>
+      <ExcessMaterialsSection/>
+      <HowItWorks/>
+      <WhyChooseUs/>
+      <FinalCTA/>
+      <FloatingIcons/>
+    </>
   );
 }
