@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 type RequestType =
   | "sell_excess"
   | "consultation"
-  | "procurement";
+  | "procurement"
+    "service";
 
 interface Props {
   opened: boolean;
