@@ -3,7 +3,7 @@ import { Group, Burger, Drawer, ScrollArea, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { NavLink } from "react-router-dom";
 import { IconChevronDown } from "@tabler/icons-react";
-
+import { Accordion } from "@mantine/core";
 export default function Navbar() {
   const [opened, { toggle, close }] = useDisclosure(false);
 
@@ -93,9 +93,42 @@ export default function Navbar() {
               About
             </NavLink>
 
-            <NavLink to="/materials" onClick={close} className={linkClasses}>
-              Materials
-            </NavLink>
+            <Accordion variant="separated">
+  <Accordion.Item value="materials">
+<Accordion.Control className="!px-0 py-0 text-sm font-medium text-gray-700 hover:text-black">
+  Materials
+</Accordion.Control>
+    <Accordion.Panel>
+      <div className="flex flex-col gap-4 ml-3">
+
+        <NavLink
+          to="/materials/finishing"
+          onClick={close}
+          className={linkClasses}
+        >
+          Finishing Construction
+        </NavLink>
+
+        <NavLink
+          to="/materials/civil"
+          onClick={close}
+          className={linkClasses}
+        >
+          Civil Construction
+        </NavLink>
+
+        <NavLink
+          to="/materials/electro"
+          onClick={close}
+          className={linkClasses}
+        >
+          Electro-Mechanical
+        </NavLink>
+
+      </div>
+    </Accordion.Panel>
+  </Accordion.Item>
+</Accordion>
 
             <NavLink to="/services" onClick={close} className={linkClasses}>
               Services
