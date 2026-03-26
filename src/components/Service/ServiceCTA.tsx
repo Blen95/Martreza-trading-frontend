@@ -1,6 +1,6 @@
-import { Container, Title, Button } from "@mantine/core";
 import { useState } from "react";
 import RequestFormModal from "../RequestFormModal";
+import { Button, Container, Title } from "@mantine/core";
 
 export default function ServicesCTA() {
   const [opened, setOpened] = useState(false);

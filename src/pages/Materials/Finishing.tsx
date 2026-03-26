@@ -1,7 +1,6 @@
 import { Container, Title, Text, Button } from "@mantine/core";
 import { motion } from "framer-motion";
-import RequestFormModal from "../../components/RequestFormModal";
-import { useState } from "react";
+import QuoteButton from "../../components/QuoteButton";
 
 import tilesImg from "../../assets/tiles.jpeg";
 import sanitaryImg from "../../assets/sanitary.jpeg";
@@ -9,8 +8,6 @@ import lightingImg from "../../assets/lighting.jpeg";
 import paintImg from "../../assets/paint.jpeg";
 
 export default function FinishingPage() {
-  const [opened, setOpened] = useState(false);
-
   const categories = [
     {
       title: "Ceramic & Porcelain Tiles",
@@ -60,8 +57,9 @@ export default function FinishingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="group rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all"
+                className="group rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col h-full"
               >
+                {/* Image */}
                 <div className="h-[280px] overflow-hidden">
                   <img
                     src={cat.img}
@@ -70,13 +68,20 @@ export default function FinishingPage() {
                   />
                 </div>
 
-                <div className="p-8">
+                {/* Content */}
+                <div className="p-8 flex flex-col flex-grow">
                   <Title order={3} className="mb-4">
                     {cat.title}
                   </Title>
-                  <Text className="text-gray-600">
+
+                  <Text className="text-gray-600 mb-6">
                     {cat.desc}
                   </Text>
+
+                  {/* Quote Button */}
+                  <div className="mt-auto">
+                   <QuoteButton itemName={cat.title} />
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -90,22 +95,10 @@ export default function FinishingPage() {
           <Title order={2} className="mb-6">
             Request Finishing Material Procurement
           </Title>
-          <Button
-            size="lg"
-            radius="xl"
-            className="bg-gray-900 text-white hover:bg-gray-800"
-            onClick={() => setOpened(true)}
-          >
-            Submit Project Inquiry
-          </Button>
+
+          <QuoteButton label="Submit Project Inquiry" />
         </Container>
       </section>
-
-      <RequestFormModal
-        opened={opened}
-        onClose={() => setOpened(false)}
-        type="procurement"
-      />
     </>
   );
 }
