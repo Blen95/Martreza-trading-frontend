@@ -8,6 +8,7 @@ import Services from "../pages/Services";
 import Contact from "../pages/Contact";
 import CivilPage from "../pages/Materials/civil";
 import ElectroPage from "../pages/Materials/electromechanical";
+import Dashboard from "../pages/Dashboard";
 
 export default function AppRoutes() {
   return (
@@ -21,6 +22,7 @@ export default function AppRoutes() {
         <Route path="/materials/electro" element={<ElectroPage/>}/>
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/dashboard" element={<Dashboard/>}/>
       </Route>
     </Routes>
   );

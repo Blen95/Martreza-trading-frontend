@@ -15,16 +15,59 @@ export interface QuoteRequestPayload {
 }
 
 const API = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "http://127.0.0.1:8000/api",
 });
 
-// ✅ Submit Quote Request
+// ================= AUTH FUNCTIONS ================= //
+
+// ✅ Register User
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export const registerUser = async (data: RegisterPayload) => {
+  const response = await API.post("/register", data);
+  return response.data; // { user, token, message }
+};
+
+// ✅ Login User
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export const loginUser = async (data: LoginPayload) => {
+  const response = await API.post("/login", data);
+  return response.data; // { user, token, message }
+};
+
+// ✅ Logout User
+export const logoutUser = async (token: string) => {
+  const response = await API.post(
+    "/logout",
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data; // { message: "Logged out successfully" }
+};
+
+// ✅ Get Authenticated User
+export const getUser = async (token: string) => {
+  const response = await API.get("/user", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data; // user object
+};
+
+// ================= QUOTE REQUEST ================= //
+
 export const submitQuoteRequest = async (data: QuoteRequestPayload) => {
   const response = await API.post("/quote-requests", data);
   return response.data;
 };
 
-// ✅ Fetch all requests (for admin later)
 export const fetchQuoteRequests = async () => {
   const response = await API.get("/quote-requests");
   return response.data;

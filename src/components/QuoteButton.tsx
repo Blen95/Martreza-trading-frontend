@@ -1,11 +1,11 @@
-import { Button } from "@mantine/core";
 import { useState } from "react";
 import QuoteRequestModal from "./QuoteRequestForm";
+import SignupModal from "./Authentication/SignUpForm";
 
 interface Props {
   label?: string;
   productId?: number | null;
-  itemName?: string; // ✅ NEW
+  itemName?: string;
 }
 
 export default function QuoteButton({
@@ -14,24 +14,33 @@ export default function QuoteButton({
   itemName,
 }: Props) {
   const [opened, setOpened] = useState(false);
+  const [signupOpened, setSignupOpened] = useState(false);
 
   return (
     <>
-      <Button
-        radius="xl"
-        size="sm"
+      <button
         onClick={() => setOpened(true)}
-        className="bg-gray-900 text-white hover:bg-gray-800 hover:scale-105 transition-all duration-300"
+        className="text-sm font-medium px-4 py-1.5 rounded-md
+                   bg-gradient-to-br from-gray-100/60 via-gray-200/40 to-gray-100/60
+                   backdrop-blur-md border border-gray-300/40
+                   hover:shadow-sm hover:-translate-y-[1px]
+                   transition-all duration-200"
       >
         {label}
-      </Button>
+      </button>
 
       <QuoteRequestModal
-  opened={opened}
-  onClose={() => setOpened(false)}
-  productId={productId}
-  itemName={itemName} // ✅ PASS HERE
-/>
+        opened={opened}
+        onClose={() => setOpened(false)}
+        productId={productId}
+        itemName={itemName}
+        onOpenSignup={() => setSignupOpened(true)}
+      />
+
+      <SignupModal
+        opened={signupOpened}
+        onClose={() => setSignupOpened(false)}
+      />
     </>
   );
 }
