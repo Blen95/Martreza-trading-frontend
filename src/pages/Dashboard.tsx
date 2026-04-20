@@ -1,85 +1,114 @@
+import { AppShell } from "@mantine/core";
+import { NavLink, useNavigate, Outlet } from "react-router-dom";
+import { Home, FileText, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUser } from "../services/api";
-import {
-  Container,
-  Text,
-  Loader,
-  Group,
-  Grid,
-} from "@mantine/core";
-import { useNavigate } from "react-router-dom";
+import { fetchQuoteRequests } from "../services/api";
+import type { QuoteRequest } from "../services/api";
 
-export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export default function DashboardLayout() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return navigate("/");
+  const [requests, setRequests] = useState<QuoteRequest[]>([]);
+  const [pendingCount, setPendingCount] = useState(0);
 
-    getUser(token)
-      .then(setUser)
-      .catch(() => navigate("/"))
-      .finally(() => setLoading(false));
+  // ✅ Fetch requests + auto refresh
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchQuoteRequests();
+        setRequests(data);
+
+        const count = data.filter(
+          (r) => r.status === "pending"
+        ).length;
+
+        setPendingCount(count);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+
+    // 🔁 polling every 5 seconds
+    const interval = setInterval(fetchData, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  if (loading)
-    return (
-      <Container className="py-24 flex justify-center">
-        <Loader />
-      </Container>
-    );
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0B1C2D] via-[#0F2438] to-[#111827] py-16 text-white">
-      <Container size="lg">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-10">
-          <h1 className="text-2xl font-bold text-white">
-  Welcome, {user?.name}
-</h1>
+    <AppShell
+      navbar={{ width: 260, breakpoint: "sm" }}
+      padding="md"
+    >
+      {/* SIDEBAR */}
+      <AppShell.Navbar className="bg-[#0F2438] border-r border-white/10 text-white flex flex-col">
 
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              navigate("/");
-            }}
-            className="text-sm text-gray-400 hover:text-white transition"
+        {/* Logo / Title */}
+        <div className="p-4 font-bold text-lg">
+          Admin Panel
+        </div>
+
+        {/* Links */}
+        <div className="px-2 space-y-2">
+
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg ${
+                isActive
+                  ? "bg-white/10"
+                  : "text-gray-400 hover:bg-white/5"
+              }`
+            }
           >
+            <Home size={18} />
+            Dashboard
+          </NavLink>
+
+          <NavLink
+            to="/requests"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg ${
+                isActive
+                  ? "bg-white/10"
+                  : "text-gray-400 hover:bg-white/5"
+              }`
+            }
+          >
+            <FileText size={18} />
+            Requests
+
+            {/* 🔥 LIVE BADGE */}
+            {pendingCount > 0 && (
+              <span className="ml-auto text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full">
+                {pendingCount}
+              </span>
+            )}
+          </NavLink>
+        </div>
+
+        {/* Logout */}
+        <div className="mt-auto p-4">
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 text-red-400 hover:text-red-300"
+          >
+            <LogOut size={18} />
             Logout
           </button>
         </div>
+      </AppShell.Navbar>
 
-        {/* Cards */}
-        <Grid>
-          {[
-            {
-              title: "Orders",
-              desc: "Track your active and past orders",
-            },
-            {
-              title: "Profile",
-              desc: user?.email,
-            },
-            {
-              title: "Requests",
-              desc: "Manage your project requests",
-            },
-          ].map((item, i) => (
-            <Grid.Col span={12} md={4} key={i}>
-              <div className="p-6 rounded-xl 
-                bg-white/5 backdrop-blur-md 
-                border border-white/10 
-                hover:bg-white/10 hover:shadow-lg 
-                transition">
-                <h3 className="font-semibold text-lg">{item.title}</h3>
-                <p className="text-sm text-gray-600 mt-2">{item.desc}</p>
-              </div>
-            </Grid.Col>
-          ))}
-        </Grid>
-      </Container>
-    </div>
+      {/* MAIN CONTENT */}
+      <AppShell.Main className="bg-gradient-to-br from-[#0B1C2D] via-[#0F2438] to-[#111827] min-h-screen text-white">
+        <Outlet />
+      </AppShell.Main>
+    </AppShell>
   );
 }

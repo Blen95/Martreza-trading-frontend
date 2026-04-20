@@ -9,6 +9,8 @@ import Contact from "../pages/Contact";
 import CivilPage from "../pages/Materials/civil";
 import ElectroPage from "../pages/Materials/electromechanical";
 import Dashboard from "../pages/Dashboard";
+import RequestsPage from "../pages/admin/Requestspage";
+import { DashboardLayout } from "../layouts/DashboardLayout";
 
 export default function AppRoutes() {
   return (
@@ -22,8 +24,12 @@ export default function AppRoutes() {
         <Route path="/materials/electro" element={<ElectroPage/>}/>
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/dashboard" element={<Dashboard/>}/>
+       
       </Route>
+      <Route element={<DashboardLayout />}>
+  <Route path="/dashboard" element={<Dashboard />} />
+  <Route path="/requests" element={<RequestsPage />} />
+</Route>
     </Routes>
   );
 }
