@@ -1,3 +1,5 @@
+// src/services/api.ts
+
 import axios from "axios";
 
 // ================= BASE SETUP ================= //
@@ -6,7 +8,7 @@ const API = axios.create({
   baseURL: "http://127.0.0.1:8000/api",
 });
 
-// ✅ Attach token automatically (no repetition everywhere)
+// Attach token automatically
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -19,7 +21,29 @@ API.interceptors.request.use((config) => {
 
 // ================= TYPES ================= //
 
-export type Status = "pending" | "contacted" | "quoted" | "closed";
+export type Status =
+  | "pending"
+  | "contacted"
+  | "quoted"
+  | "closed";
+
+// ================= ITEM ================= //
+
+export interface QuoteRequestItem {
+  id?: number;
+
+  category: string;
+  brand?: string;
+  size?: string;
+
+  unit: string;
+  quantity: number;
+
+  design?: string;
+  design_url?: string;
+}
+
+// ================= QUOTE REQUEST ================= //
 
 export interface QuoteRequestPayload {
   name: string;
@@ -27,33 +51,41 @@ export interface QuoteRequestPayload {
   email?: string;
   company?: string;
 
-  item_name: string;
-  unit: string;
+  items: {
+    category: string;
+    brand?: string;
+    size?: string;
 
-  quantity: number;
-  message?: string;
-  product_id?: number | null;
+    unit: string;
+    quantity: number;
+
+    design?: File | null;
+  }[];
 }
 
 export interface QuoteRequest {
   id: number;
-  user_id: number;
+
+  user_id: number | null;
 
   name: string;
   phone: string;
-  email?: string;
+  email: string;
   company?: string;
-
-  item_name: string;
-  unit: string;
-  quantity: number;
-  message?: string;
-  product_id?: number | null;
 
   status: Status;
 
+  quoted_price?: number | null;
+  initial_payment?: number | null;
+  estimated_arrival?: string | null;
+
+  quoted_at?: string | null;
+  status_updated_at?: string | null;
+
   created_at: string;
   updated_at: string;
+
+  items: QuoteRequestItem[];
 }
 
 // ================= AUTH ================= //
@@ -64,8 +96,11 @@ export interface RegisterPayload {
   password: string;
 }
 
-export const registerUser = async (data: RegisterPayload) => {
+export const registerUser = async (
+  data: RegisterPayload
+) => {
   const response = await API.post("/register", data);
+
   return response.data;
 };
 
@@ -74,46 +109,74 @@ export interface LoginPayload {
   password: string;
 }
 
-export const loginUser = async (data: LoginPayload) => {
+export const loginUser = async (
+  data: LoginPayload
+) => {
   const response = await API.post("/login", data);
+
   return response.data;
 };
 
 export const logoutUser = async () => {
   const response = await API.post("/logout");
+
   return response.data;
 };
 
 export const getUser = async () => {
   const response = await API.get("/user");
+
   return response.data;
 };
 
 // ================= QUOTE REQUEST ================= //
 
-// ✅ Create
 export const submitQuoteRequest = async (
-  data: QuoteRequestPayload
+  data: FormData
 ) => {
-  const response = await API.post("/quote-requests", data);
+  const response = await API.post(
+    "/quote-requests",
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
   return response.data;
 };
 
-// ✅ Fetch (typed)
-export const fetchQuoteRequests = async (): Promise<QuoteRequest[]> => {
+export const fetchQuoteRequests = async (): Promise<
+  QuoteRequest[]
+> => {
   const response = await API.get("/quote-requests");
+
   return response.data.data;
 };
 
-// ✅ Update Status (NEW)
-export const updateQuoteStatus = async (
+// ================= ADMIN UPDATE ================= //
+
+export interface QuoteUpdatePayload {
+  status: Status;
+
+  quoted_price?: number;
+
+  initial_payment?: number;
+
+  estimated_arrival?: string;
+}
+
+export const updateQuote = async (
   id: number,
-  status: Status
+  data: QuoteUpdatePayload
 ): Promise<QuoteRequest> => {
   const response = await API.patch(
-    `/quote-requests/${id}/status`,
-    { status }
+    `/quote-requests/${id}/quote`,
+    data
   );
 
   return response.data.data;
 };
+
+export default API;

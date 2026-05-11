@@ -11,7 +11,7 @@ import ElectroPage from "../pages/Materials/electromechanical";
 import Dashboard from "../pages/Dashboard";
 import RequestsPage from "../pages/admin/Requestspage";
 import { DashboardLayout } from "../layouts/DashboardLayout";
-
+import QuoteRequestPage from "../pages/QuoteRequestPage";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -24,7 +24,10 @@ export default function AppRoutes() {
         <Route path="/materials/electro" element={<ElectroPage/>}/>
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-       
+       <Route
+  path="/quote-request"
+  element={<QuoteRequestPage />}
+/>
       </Route>
       <Route element={<DashboardLayout />}>
   <Route path="/dashboard" element={<Dashboard />} />

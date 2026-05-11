@@ -80,7 +80,7 @@ export default function FinishingPage() {
 
                   {/* Quote Button */}
                   <div className="mt-auto">
-                   <QuoteButton itemName={cat.title} />
+                   <QuoteButton itemCategory={cat.title} />
                   </div>
                 </div>
               </motion.div>

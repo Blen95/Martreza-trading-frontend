@@ -12,10 +12,21 @@ import { useNavigate } from "react-router-dom";
 interface Props {
   opened: boolean;
   onClose: () => void;
+  defaultEmail?: string;
+  defaultName?: string;
 }
 
-export default function SignupModal({ opened, onClose }: Props) {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+export default function SignupModal({
+  opened,
+  onClose,
+  defaultEmail = "",
+  defaultName = "",
+}: Props) {
+  const [form, setForm] = useState({
+  name: defaultName,
+  email: defaultEmail,
+  password: "",
+});
   const [error, setError] = useState("");
   const navigate = useNavigate();
 

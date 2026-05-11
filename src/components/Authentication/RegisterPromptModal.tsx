@@ -17,36 +17,63 @@ export default function RegisterPromptModal({
       onClose={onClose}
       centered
       withCloseButton={false}
-      overlayProps={{ backgroundOpacity: 0.6, blur: 8 }}
+      overlayProps={{
+        backgroundOpacity: 0.6,
+        blur: 8,
+      }}
       classNames={{
         content:
-          "bg-gradient-to-br from-[#0B1C2D]/90 via-[#0F2438]/90 to-[#111827]/90 backdrop-blur-xl border border-white/10 rounded-xl text-white",
-        body: "p-6",
+          "bg-gradient-to-br from-[#0B1C2D]/95 via-[#0F2438]/95 to-[#111827]/95 backdrop-blur-xl border border-white/10 rounded-2xl text-white shadow-2xl",
+        body: "p-8",
       }}
     >
       <Stack align="center" gap="md">
-        <h2 className="text-xl font-semibold text-center">
-          Stay Updated on Your Request
-        </h2>
+        {/* SUCCESS ICON */}
 
-        <Text className="text-gray-300 text-center text-sm">
-          Create an account to track your quote, receive updates, and manage your
-          requests easily.
-        </Text>
+        <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center border border-green-400/30">
+          <span className="text-3xl text-green-400">
+            ✓
+          </span>
+        </div>
 
-        <div className="flex gap-3 mt-4 w-full">
+        {/* SUCCESS MESSAGE */}
+
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-white">
+            Quote Request Submitted!
+          </h2>
+
+          <Text className="text-gray-300 mt-2 text-sm leading-relaxed">
+            Your request has been received successfully.
+            Our team will contact you shortly.
+          </Text>
+        </div>
+
+        {/* REGISTER PROMPT */}
+
+        <div className="bg-white/5 border border-white/10 rounded-xl p-4 w-full">
+          <Text className="text-center text-sm text-gray-300 leading-relaxed">
+            Create an account to track your quote
+            requests, receive updates, and manage
+            future orders more easily.
+          </Text>
+        </div>
+
+        {/* ACTIONS */}
+
+        <div className="flex gap-3 mt-2 w-full">
           <button
             onClick={onClose}
-            className="flex-1 text-sm py-2 rounded-md border border-white/20 text-gray-300 hover:bg-white/10 transition"
+            className="flex-1 py-2.5 rounded-lg border border-white/15 text-gray-300 hover:bg-white/10 transition"
           >
             Maybe Later
           </button>
 
           <button
             onClick={onRegister}
-            className="flex-1 text-sm py-2 rounded-md bg-white text-black hover:bg-gray-200 transition"
+            className="flex-1 py-2.5 rounded-lg bg-white text-black font-medium hover:bg-gray-200 transition"
           >
-            Register
+            Create Account
           </button>
         </div>
       </Stack>
