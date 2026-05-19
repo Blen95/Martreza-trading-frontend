@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   Loader,
   Tabs,
@@ -26,31 +27,63 @@ import type {
 
 import {
   Phone,
-  Mail,
+ Mail,
   Pencil,
   Image as ImageIcon,
 } from "lucide-react";
 
+import PlaceOrderModal from "../../components/orders/PlaceOrderModal";
+
 export default function RequestsPage() {
-  const [requests, setRequests] = useState<QuoteRequest[]>([]);
-  const [filtered, setFiltered] = useState<QuoteRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [requests, setRequests] =
+    useState<QuoteRequest[]>([]);
 
-  const [activeTab, setActiveTab] = useState<string>("all");
+  const [filtered, setFiltered] =
+    useState<QuoteRequest[]>([]);
 
-  const [opened, setOpened] = useState(false);
+  const [loading, setLoading] =
+    useState(true);
+
+  const [activeTab, setActiveTab] =
+    useState<string>("all");
+
+  const [opened, setOpened] =
+    useState(false);
 
   const [selected, setSelected] =
-    useState<QuoteRequest | null>(null);
+    useState<QuoteRequest | null>(
+      null
+    );
 
-  const [role, setRole] = useState("");
+  const [role, setRole] =
+    useState("");
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
+
+  // ================= ORDER MODAL ================= //
+
+  const [
+    orderModalOpened,
+    setOrderModalOpened,
+  ] = useState(false);
+
+  const [
+    selectedOrderRequest,
+    setSelectedOrderRequest,
+  ] = useState<QuoteRequest | null>(
+    null
+  );
+
+  // ================= UPDATE FORM ================= //
 
   const [form, setForm] = useState({
     status: "pending" as Status,
+
     quoted_price: "",
+
     initial_payment: "",
+
     estimated_arrival: "",
   });
 
@@ -59,17 +92,23 @@ export default function RequestsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [requestsData, userData] =
-          await Promise.all([
-            fetchQuoteRequests(),
-            getUser(),
-          ]);
+        const [
+          requestsData,
+          userData,
+        ] = await Promise.all([
+          fetchQuoteRequests(),
+          getUser(),
+        ]);
 
         setRequests(requestsData);
+
         setRole(userData.role);
       } catch (err) {
         console.error(err);
-        setError("Failed to load requests");
+
+        setError(
+          "Failed to load requests"
+        );
       } finally {
         setLoading(false);
       }
@@ -77,9 +116,13 @@ export default function RequestsPage() {
 
     fetchData();
 
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(
+      fetchData,
+      5000
+    );
 
-    return () => clearInterval(interval);
+    return () =>
+      clearInterval(interval);
   }, []);
 
   // ================= FILTER ================= //
@@ -90,7 +133,8 @@ export default function RequestsPage() {
     } else {
       setFiltered(
         requests.filter(
-          (r) => r.status === activeTab
+          (r) =>
+            r.status === activeTab
         )
       );
     }
@@ -98,7 +142,9 @@ export default function RequestsPage() {
 
   // ================= HELPERS ================= //
 
-  const getStatusColor = (status: Status) => {
+  const getStatusColor = (
+    status: Status
+  ) => {
     switch (status) {
       case "pending":
         return "yellow";
@@ -122,21 +168,28 @@ export default function RequestsPage() {
   ) => {
     if (!date) return "—";
 
-    return new Date(date).toLocaleString();
+    return new Date(
+      date
+    ).toLocaleString();
   };
 
-  // ================= MODAL ================= //
+  // ================= UPDATE MODAL ================= //
 
-  const openModal = (req: QuoteRequest) => {
+  const openModal = (
+    req: QuoteRequest
+  ) => {
     setSelected(req);
 
     setForm({
       status: req.status,
+
       quoted_price:
-        req.quoted_price?.toString() || "",
+        req.quoted_price?.toString() ||
+        "",
 
       initial_payment:
-        req.initial_payment?.toString() || "",
+        req.initial_payment?.toString() ||
+        "",
 
       estimated_arrival:
         req.estimated_arrival || "",
@@ -145,45 +198,66 @@ export default function RequestsPage() {
     setOpened(true);
   };
 
+  // ================= PLACE ORDER ================= //
+
+  const openOrderModal = (
+    req: QuoteRequest
+  ) => {
+    setSelectedOrderRequest(req);
+
+    setOrderModalOpened(true);
+  };
+
   // ================= SAVE ================= //
 
   const handleSave = async () => {
     if (!selected) return;
 
     try {
-      const updated = await updateQuote(
-        selected.id,
-        {
-          status: form.status,
+      const updated =
+        await updateQuote(
+          selected.id,
+          {
+            status: form.status,
 
-          quoted_price: form.quoted_price
-            ? Number(form.quoted_price)
-            : undefined,
+            quoted_price:
+              form.quoted_price
+                ? Number(
+                    form.quoted_price
+                  )
+                : undefined,
 
-          initial_payment:
-            form.initial_payment
-              ? Number(form.initial_payment)
-              : undefined,
+            initial_payment:
+              form.initial_payment
+                ? Number(
+                    form.initial_payment
+                  )
+                : undefined,
 
-          estimated_arrival:
-            form.estimated_arrival,
-        }
-      );
+            estimated_arrival:
+              form.estimated_arrival,
+          }
+        );
 
       setRequests((prev) =>
         prev.map((r) =>
-          r.id === updated.id ? updated : r
+          r.id === updated.id
+            ? updated
+            : r
         )
       );
 
       setOpened(false);
     } catch (err) {
       console.error(err);
-      setError("Failed to update quote");
+
+      setError(
+        "Failed to update quote"
+      );
     }
   };
 
-  // ================= UI ================= //
+  // ================= LOADING ================= //
 
   if (loading) {
     return (
@@ -193,9 +267,10 @@ export default function RequestsPage() {
     );
   }
 
+  // ================= UI ================= //
+
   return (
     <div className="px-8 py-6 text-white">
-
       {/* HEADER */}
 
       <div className="mb-8">
@@ -204,7 +279,8 @@ export default function RequestsPage() {
         </h1>
 
         <p className="text-gray-400 mt-1">
-          Manage customer requests and quotations
+          Manage customer requests
+          and quotations
         </p>
       </div>
 
@@ -214,7 +290,9 @@ export default function RequestsPage() {
         <Notification
           color="red"
           mb="lg"
-          onClose={() => setError("")}
+          onClose={() =>
+            setError("")
+          }
         >
           {error}
         </Notification>
@@ -255,7 +333,6 @@ export default function RequestsPage() {
       {/* REQUESTS */}
 
       <div className="mt-6 grid gap-6">
-
         {filtered.length === 0 ? (
           <div className="text-gray-400">
             No requests found.
@@ -266,17 +343,15 @@ export default function RequestsPage() {
               key={req.id}
               className="rounded-3xl bg-white/5 border border-white/10 p-6 backdrop-blur-xl"
             >
-
               {/* TOP */}
 
               <div className="flex justify-between items-start">
-
                 <div>
                   <h2 className="text-xl font-semibold">
                     {req.name}
                   </h2>
 
-                  <div className="flex gap-4 text-sm text-gray-400 mt-2">
+                  <div className="flex gap-4 text-sm text-gray-400 mt-2 flex-wrap">
                     <span>
                       {req.phone}
                     </span>
@@ -304,14 +379,14 @@ export default function RequestsPage() {
 
               {req.company && (
                 <div className="mt-3 text-sm text-gray-300">
-                  Company: {req.company}
+                  Company:{" "}
+                  {req.company}
                 </div>
               )}
 
               {/* ITEMS */}
 
               <div className="mt-6 grid md:grid-cols-2 gap-5">
-
                 {req.items?.map(
                   (
                     item: QuoteRequestItem,
@@ -321,30 +396,51 @@ export default function RequestsPage() {
                       key={index}
                       className="rounded-2xl border border-white/10 bg-black/20 overflow-hidden"
                     >
+                      {/* IMAGES */}
 
-                      {/* IMAGE */}
+                      <div className="grid grid-cols-2 gap-1 bg-black/30">
+                        {/* FIRST IMAGE */}
 
-                      <div className="h-56 bg-black/30">
+                        <div className="h-56">
+                          {item.design_url ? (
+                            <img
+                              src={
+                                item.design_url
+                              }
+                              alt={
+                                item.category
+                              }
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-full flex items-center justify-center text-gray-500">
+                              <ImageIcon />
+                            </div>
+                          )}
+                        </div>
 
-                        {item.design_url ? (
-                          <img
-                            src={item.design_url}
-                            alt={
-                              item.category
-                            }
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="h-full flex items-center justify-center text-gray-500">
-                            <ImageIcon />
-                          </div>
-                        )}
+                        {/* SECOND IMAGE */}
+
+                        <div className="h-56">
+                          {item.design2_url ? (
+                            <img
+                              src={
+                                item.design2_url
+                              }
+                              alt={`${item.category} second`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-full flex items-center justify-center text-gray-500">
+                              <ImageIcon />
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       {/* CONTENT */}
 
                       <div className="p-5 space-y-2">
-
                         <h3 className="font-semibold text-lg">
                           {
                             item.category
@@ -354,7 +450,9 @@ export default function RequestsPage() {
                         {item.brand && (
                           <p className="text-sm text-gray-300">
                             Brand:{" "}
-                            {item.brand}
+                            {
+                              item.brand
+                            }
                           </p>
                         )}
 
@@ -380,21 +478,20 @@ export default function RequestsPage() {
 
               {/* QUOTE DETAILS */}
 
-              {req.status === "quoted" && (
+              {req.status ===
+                "quoted" && (
                 <div className="mt-6 rounded-2xl bg-green-500/10 border border-green-500/20 p-5">
-
-                  <h3 className="font-semibold mb-4">
+                  <h3 className="font-semibold mb-4 text-lg">
                     Quote Details
                   </h3>
 
-                  <div className="space-y-2 text-sm">
-
+                  <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-400">
                         Quoted Price
                       </span>
 
-                      <span>
+                      <span className="font-semibold">
                         ETB{" "}
                         {
                           req.quoted_price
@@ -407,7 +504,7 @@ export default function RequestsPage() {
                         Initial Payment
                       </span>
 
-                      <span>
+                      <span className="font-semibold">
                         ETB{" "}
                         {
                           req.initial_payment
@@ -420,7 +517,7 @@ export default function RequestsPage() {
                         Estimated Arrival
                       </span>
 
-                      <span>
+                      <span className="font-semibold">
                         {
                           req.estimated_arrival
                         }
@@ -433,6 +530,33 @@ export default function RequestsPage() {
                         req.quoted_at
                       )}
                     </div>
+
+                    {/* PLACE ORDER BUTTON */}
+
+                   {!req.order ? (
+  <Button
+    mt="lg"
+    fullWidth
+    color="green"
+    size="md"
+    onClick={() =>
+      openOrderModal(req)
+    }
+  >
+    Place Order
+  </Button>
+) : (
+  <div className="mt-4 rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 text-sm">
+    <p className="font-semibold text-blue-300">
+      Order Already Placed
+    </p>
+
+    <p className="text-gray-400 mt-1">
+      This quote request already has an
+      order attached.
+    </p>
+  </div>
+)}
                   </div>
                 </div>
               )}
@@ -440,7 +564,6 @@ export default function RequestsPage() {
               {/* FOOTER */}
 
               <div className="mt-6 flex justify-between items-center">
-
                 <div className="text-xs text-gray-500 space-y-1">
                   <p>
                     Created:{" "}
@@ -459,7 +582,6 @@ export default function RequestsPage() {
 
                 {role === "admin" && (
                   <div className="flex gap-5 items-center">
-
                     <a
                       href={`tel:${req.phone}`}
                     >
@@ -502,14 +624,15 @@ export default function RequestsPage() {
 
       <Modal
         opened={opened}
-        onClose={() => setOpened(false)}
+        onClose={() =>
+          setOpened(false)
+        }
         centered
         size="lg"
         title="Update Quote"
       >
         <ScrollArea.Autosize mah={500}>
           <div className="space-y-4">
-
             <Radio.Group
               value={form.status}
               onChange={(value) =>
@@ -546,7 +669,9 @@ export default function RequestsPage() {
             <TextInput
               label="Quoted Price"
               placeholder="Enter price"
-              value={form.quoted_price}
+              value={
+                form.quoted_price
+              }
               onChange={(e) =>
                 setForm({
                   ...form,
@@ -559,7 +684,9 @@ export default function RequestsPage() {
             <TextInput
               label="Initial Payment"
               placeholder="Enter amount"
-              value={form.initial_payment}
+              value={
+                form.initial_payment
+              }
               onChange={(e) =>
                 setForm({
                   ...form,
@@ -594,6 +721,20 @@ export default function RequestsPage() {
           </div>
         </ScrollArea.Autosize>
       </Modal>
+
+      {/* PLACE ORDER MODAL */}
+
+      <PlaceOrderModal
+        opened={orderModalOpened}
+        onClose={() =>
+          setOrderModalOpened(
+            false
+          )
+        }
+        request={
+          selectedOrderRequest
+        }
+      />
     </div>
   );
 }

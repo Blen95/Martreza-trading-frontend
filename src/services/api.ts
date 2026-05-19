@@ -41,6 +41,9 @@ export interface QuoteRequestItem {
 
   design?: string;
   design_url?: string;
+
+  design2?: string;
+  design2_url?: string;
 }
 
 // ================= QUOTE REQUEST ================= //
@@ -107,6 +110,39 @@ export const registerUser = async (
 export interface LoginPayload {
   email: string;
   password: string;
+}
+// ================= ORDERS ================= //
+
+export type OrderStatus =
+  | "requested"
+  | "reviewing"
+  | "awaiting_payment"
+  | "paid"
+  | "processing"
+  | "completed"
+  | "cancelled";
+
+export interface Receipt {
+  id: number;
+  file_path: string;
+  url?: string;
+  status: string;
+}
+
+export interface Order {
+  id: number;
+
+  quote_request_id: number;
+
+  status: OrderStatus;
+
+  approved_at?: string;
+
+  created_at: string;
+
+  quote_request?: QuoteRequest;
+
+  receipts?: Receipt[];
 }
 
 export const loginUser = async (
@@ -178,5 +214,60 @@ export const updateQuote = async (
 
   return response.data.data;
 };
+// ================= PLACE ORDER ================= //
 
+export const placeOrder = async (
+  quoteRequestId: number,
+  receipt: File
+): Promise<Order> => {
+  const formData = new FormData();
+
+  formData.append(
+    "quote_request_id",
+    String(quoteRequestId)
+  );
+
+  formData.append("receipt", receipt);
+
+  const response = await API.post(
+    "/orders",
+    formData,
+    {
+      headers: {
+        "Content-Type":
+          "multipart/form-data",
+      },
+    }
+  );
+
+  return response.data.data;
+};
+
+// ================= FETCH ORDERS ================= //
+
+export const fetchOrders = async (): Promise<
+  Order[]
+> => {
+  const response = await API.get(
+    "/orders"
+  );
+
+  return response.data.data;
+};
+
+// ================= UPDATE ORDER STATUS ================= //
+
+export const updateOrderStatus =
+  async (
+    id: number,
+    status: OrderStatus
+  ): Promise<Order> => {
+    const response =
+      await API.patch(
+        `/orders/${id}/status`,
+        { status }
+      );
+
+    return response.data.data;
+  };
 export default API;
