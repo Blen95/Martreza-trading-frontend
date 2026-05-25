@@ -12,7 +12,9 @@ import Services from "../pages/Services";
 import Contact from "../pages/Contact";
 
 import Dashboard from "../pages/Dashboard";
-
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import StockManagerDashboard from "../pages/StockManagerDashboard";
+import InventoryPage from "../pages/admin/InventoryPage";
 import RequestsPage from "../pages/admin/Requestspage";
 
 import OrdersPage from "../pages/admin/Orderspage";
@@ -78,11 +80,15 @@ export default function AppRoutes() {
 
       <Route element={<DashboardLayout />}>
 
-        <Route
+         <Route
           path="/dashboard"
           element={<Dashboard />}
         />
 
+<Route
+  path="/admin/dashboard"
+  element={<AdminDashboard />}
+/>
         <Route
           path="/requests"
           element={<RequestsPage />}
@@ -92,8 +98,16 @@ export default function AppRoutes() {
           path="/orders"
           element={<OrdersPage />}
         />
-
+<Route
+  path="/inventory"
+  element={<InventoryPage />}
+/>
+<Route
+  path="/stock/dashboard"
+  element={<StockManagerDashboard />}
+/>
       </Route>
+      
     </Routes>
   );
 }

@@ -104,7 +104,20 @@ export default function DashboardLayout() {
               </span>
             )}
           </NavLink>
-
+         {/* ORDERS */}
+<NavLink
+  to="/user/orders"
+  className={({ isActive }) =>
+    `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+      isActive
+        ? "bg-white/10 text-white"
+        : "text-gray-400 hover:bg-white/5 hover:text-white"
+    }`
+  }
+>
+  <FileText size={18} />
+  Orders
+</NavLink>
         </div>
 
         {/* LOGOUT */}

@@ -19,6 +19,32 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
+export interface Product {
+  id: number;
+
+  name: string;
+
+  category?: string;
+
+  description?: string;
+
+  image?: string;
+
+  origin?: string;
+
+  sku?: string;
+
+  quantity: number;
+
+  minimum_stock: number;
+
+  price?: number;
+
+  is_active: boolean;
+
+  created_at?: string;
+}
+
 // ================= TYPES ================= //
 
 export type Status =
@@ -270,4 +296,77 @@ export const updateOrderStatus =
 
     return response.data.data;
   };
+
+  export async function fetchProducts() {
+  const token = localStorage.getItem("token");
+
+  const res = await API.get("/products", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+}
+
+export async function createProduct(data: FormData | object) {
+  const token = localStorage.getItem("token");
+
+  const res = await API.post("/products", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+}
+
+export async function updateProduct(
+  id: number,
+  data: object
+) {
+  const token = localStorage.getItem("token");
+
+  const res = await API.put(
+    `/products/${id}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+}
+
+export async function deleteProduct(id: number) {
+  const token = localStorage.getItem("token");
+
+  const res = await API.delete(
+    `/products/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+}
+
+export async function fetchLowStockProducts() {
+  const token = localStorage.getItem("token");
+
+  const res = await API.get(
+    "/products-low-stock",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+}
 export default API;
