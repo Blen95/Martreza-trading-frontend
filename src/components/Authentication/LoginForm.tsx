@@ -88,7 +88,7 @@ export default function LoginModal({
 ) {
 
   window.open(
-    "/dashboard",
+    "/customer/dashboard",
     "_blank"
   );
 

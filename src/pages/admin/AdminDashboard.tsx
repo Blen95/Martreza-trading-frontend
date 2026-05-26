@@ -31,20 +31,24 @@ import type {
 } from "../../services/api";
 
 export default function AdminDashboard() {
-  const [requests, setRequests] = useState<
-    QuoteRequest[]
-  >([]);
 
-  const [orders, setOrders] = useState<
-    Order[]
-  >([]);
+  const [requests, setRequests] =
+    useState<QuoteRequest[]>([]);
+
+  const [orders, setOrders] =
+    useState<Order[]>([]);
 
   const [loading, setLoading] =
     useState(true);
 
+  // ================= FETCH ================= //
+
   useEffect(() => {
+
     const load = async () => {
+
       try {
+
         const [
           requestsData,
           ordersData,
@@ -56,20 +60,27 @@ export default function AdminDashboard() {
         setRequests(requestsData);
 
         setOrders(ordersData);
+
       } catch (err) {
+
         console.error(err);
+
       } finally {
+
         setLoading(false);
+
       }
     };
 
     load();
+
   }, []);
 
   // ================= REQUEST STATUS ================= //
 
   const requestStatusData =
     useMemo(() => {
+
       const counts = {
         pending: 0,
         contacted: 0,
@@ -87,12 +98,14 @@ export default function AdminDashboard() {
           value,
         })
       );
+
     }, [requests]);
 
   // ================= ORDER STATUS ================= //
 
   const orderStatusData =
     useMemo(() => {
+
       const counts = {
         requested: 0,
         reviewing: 0,
@@ -113,16 +126,35 @@ export default function AdminDashboard() {
           value,
         })
       );
+
     }, [orders]);
 
   // ================= REVENUE ================= //
+const revenueStatuses = [
+  "paid",
+  "processing",
+  "completed",
+];
 
-  const totalRevenue =
-    requests.reduce((sum, r) => {
-      return (
-        sum + (r.quoted_price || 0)
-      );
-    }, 0);
+const totalRevenue =
+  orders.reduce((sum, order) => {
+
+    if (
+      !revenueStatuses.includes(
+        order.status
+      )
+    ) {
+      return sum;
+    }
+
+    const quotedPrice = Number(
+      order.quote_request
+        ?.quoted_price || 0
+    );
+
+    return sum + quotedPrice;
+
+  }, 0);
 
   // ================= COLORS ================= //
 
@@ -136,80 +168,136 @@ export default function AdminDashboard() {
     "#f97316",
   ];
 
+  // ================= TOOLTIP ================= //
+
+  const tooltipStyle = {
+    backgroundColor: "#0F2438",
+    border:
+      "1px solid rgba(255,255,255,0.1)",
+    borderRadius: "12px",
+    color: "white",
+  };
+
+  // ================= LOADING ================= //
+
   if (loading) {
+
     return (
+
       <div className="flex justify-center items-center h-[60vh]">
         <Loader />
       </div>
+
     );
   }
 
+  // ================= UI ================= //
+
   return (
-    <div className="p-8 text-white">
-      {/* HEADER */}
+
+    <div className="p-4 md:p-8 text-white">
+
+      {/* ================= HEADER ================= */}
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">
+
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+
           Admin Dashboard
+
         </h1>
 
-        <p className="text-gray-400">
+        <p className="text-gray-300 mt-2">
+
           Business overview and analytics
+
         </p>
+
+        <div className="mt-6 h-px bg-white/10" />
+
       </div>
 
-      {/* STATS */}
+      {/* ================= STATS ================= */}
 
       <SimpleGrid
-        cols={{ base: 1, md: 2, lg: 4 }}
+        cols={{
+          base: 1,
+          sm: 2,
+          lg: 4,
+        }}
+        spacing="lg"
         mb="xl"
       >
+
+        {/* TOTAL REQUESTS */}
+
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
+
+          <Text
+            size="sm"
+            className="text-gray-300"
+          >
             Total Requests
           </Text>
 
           <Text
-            size="2rem"
-            fw={700}
+            size="2.2rem"
+            fw={800}
+            className="text-white"
           >
             {requests.length}
           </Text>
+
         </Card>
+
+        {/* TOTAL ORDERS */}
 
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
+
+          <Text
+            size="sm"
+            className="text-gray-300"
+          >
             Total Orders
           </Text>
 
           <Text
-            size="2rem"
-            fw={700}
+            size="2.2rem"
+            fw={800}
+            className="text-white"
           >
             {orders.length}
           </Text>
+
         </Card>
+
+        {/* QUOTED REQUESTS */}
 
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
+
+          <Text
+            size="sm"
+            className="text-gray-300"
+          >
             Quoted Requests
           </Text>
 
           <Text
-            size="2rem"
-            fw={700}
+            size="2.2rem"
+            fw={800}
+            className="text-white"
           >
             {
               requests.filter(
@@ -218,60 +306,85 @@ export default function AdminDashboard() {
               ).length
             }
           </Text>
+
         </Card>
+
+        {/* REVENUE */}
 
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
-            Revenue
-          </Text>
 
           <Text
-            size="2rem"
-            fw={700}
-          >
-            ETB{" "}
-            {totalRevenue.toLocaleString()}
-          </Text>
+  size="sm"
+  className="text-gray-300"
+>
+  Revenue
+</Text>
+
+<Text
+  fw={800}
+  className="text-white text-2xl md:text-3xl break-words"
+>
+
+  ETB{" "}
+  {Intl.NumberFormat(
+    "en",
+    {
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }
+  ).format(
+    Number(totalRevenue || 0)
+  )}
+
+</Text>
+
         </Card>
+
       </SimpleGrid>
 
-      {/* CHARTS */}
+      {/* ================= CHARTS ================= */}
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* REQUEST PIE */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {/* ================= REQUEST STATUS ================= */}
 
         <Card
           radius="xl"
           padding="lg"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <h2 className="text-xl font-semibold mb-6">
+
+          <h2 className="text-xl md:text-2xl font-semibold mb-6 text-white">
+
             Request Status
+
           </h2>
 
           <ResponsiveContainer
             width="100%"
-            height={300}
+            height={320}
           >
+
             <PieChart>
+
               <Pie
-                data={
-                  requestStatusData
-                }
+                data={requestStatusData}
                 dataKey="value"
                 nameKey="name"
                 outerRadius={100}
-                label
+                label={{
+                  fill: "#ffffff",
+                  fontSize: 13,
+                }}
               >
+
                 {requestStatusData.map(
-                  (
-                    _,
-                    index
-                  ) => (
+                  (_, index) => (
+
                     <Cell
                       key={index}
                       fill={
@@ -281,47 +394,78 @@ export default function AdminDashboard() {
                         ]
                       }
                     />
+
                   )
                 )}
+
               </Pie>
 
-              <Tooltip />
+              <Tooltip
+                contentStyle={
+                  tooltipStyle
+                }
+              />
+
             </PieChart>
+
           </ResponsiveContainer>
+
         </Card>
 
-        {/* ORDER BAR */}
+        {/* ================= ORDER STATUS ================= */}
 
         <Card
           radius="xl"
           padding="lg"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <h2 className="text-xl font-semibold mb-6">
+
+          <h2 className="text-xl md:text-2xl font-semibold mb-6 text-white">
+
             Order Status
+
           </h2>
 
           <ResponsiveContainer
             width="100%"
-            height={300}
+            height={320}
           >
+
             <BarChart
               data={orderStatusData}
             >
-              <CartesianGrid strokeDasharray="3 3" />
 
-              <XAxis dataKey="name" />
+              <CartesianGrid
+                stroke="rgba(255,255,255,0.08)"
+                strokeDasharray="3 3"
+              />
 
-              <YAxis />
+              <XAxis
+                dataKey="name"
+                tick={{
+                  fill: "#d1d5db",
+                  fontSize: 12,
+                }}
+              />
 
-              <Tooltip />
+              <YAxis
+                tick={{
+                  fill: "#d1d5db",
+                  fontSize: 12,
+                }}
+              />
+
+              <Tooltip
+                contentStyle={
+                  tooltipStyle
+                }
+              />
 
               <Bar dataKey="value">
+
                 {orderStatusData.map(
-                  (
-                    _,
-                    index
-                  ) => (
+                  (_, index) => (
+
                     <Cell
                       key={index}
                       fill={
@@ -331,13 +475,20 @@ export default function AdminDashboard() {
                         ]
                       }
                     />
+
                   )
                 )}
+
               </Bar>
+
             </BarChart>
+
           </ResponsiveContainer>
+
         </Card>
+
       </div>
+
     </div>
   );
 }

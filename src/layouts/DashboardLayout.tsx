@@ -92,7 +92,7 @@ export function DashboardLayout() {
               {/* REQUESTS */}
 
               <NavLink
-                to="/requests"
+                to="/admin/requests"
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
                     isActive
@@ -108,7 +108,7 @@ export function DashboardLayout() {
               {/* ORDERS */}
 
               <NavLink
-                to="/orders"
+                to="/admin/orders"
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
                     isActive
@@ -147,23 +147,30 @@ export function DashboardLayout() {
           {/* ================= INVENTORY ================= */}
 
           {(role === "admin" ||
-            role === "stock_manager") && (
+  role === "stock_manager") && (
 
-            <NavLink
-              to="/inventory"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
-                  isActive
-                    ? "bg-white/10 text-white"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
-                }`
-              }
-            >
-              <Package size={18} />
-              Inventory
-            </NavLink>
+  <NavLink
+    to={
+      role === "admin"
+        ? "/admin/inventory"
+        : "/stock/inventory"
+    }
+    className={({ isActive }) =>
+      `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+        isActive
+          ? "bg-white/10 text-white"
+          : "text-gray-400 hover:bg-white/5 hover:text-white"
+      }`
+    }
+  >
 
-          )}
+    <Package size={18} />
+
+    Inventory
+
+  </NavLink>
+
+)}
 
         </div>
 

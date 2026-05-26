@@ -8,9 +8,14 @@ import {
   Badge,
 } from "@mantine/core";
 
-import { fetchProducts,fetchLowStockProducts } from "../services/api";
+import {
+  fetchProducts,
+  fetchLowStockProducts,
+} from "../services/api";
 
-import type { Product } from "../services/api";
+import type {
+  Product,
+} from "../services/api";
 
 export default function StockManagerDashboard() {
 
@@ -65,7 +70,8 @@ export default function StockManagerDashboard() {
 
   const totalUnits =
     products.reduce(
-      (sum, p) => sum + p.quantity,
+      (sum, p) =>
+        sum + p.quantity,
       0
     );
 
@@ -79,169 +85,270 @@ export default function StockManagerDashboard() {
   if (loading) {
 
     return (
+
       <div className="flex justify-center items-center h-[60vh]">
         <Loader />
       </div>
+
     );
   }
 
   // ================= UI ================= //
 
   return (
-    <div className="p-8 space-y-8">
 
-      {/* HEADER */}
+    <div className="p-4 md:p-8 space-y-8 text-white">
+
+      {/* ================= HEADER ================= */}
 
       <div>
 
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+
           Stock Manager Dashboard
+
         </h1>
 
-        <p className="text-gray-400 mt-2">
+        <p className="text-gray-300 mt-2 text-sm md:text-base">
+
           Inventory overview and stock monitoring
+
         </p>
+
+        <div className="mt-6 h-px bg-white/10" />
 
       </div>
 
-      {/* STATS */}
+      {/* ================= STATS ================= */}
 
       <SimpleGrid
         cols={{
           base: 1,
-          md: 2,
+          sm: 2,
           lg: 4,
         }}
+        spacing="lg"
       >
+
+        {/* TOTAL PRODUCTS */}
 
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
+
+          <Text
+            size="sm"
+            className="text-gray-300"
+          >
             Total Products
           </Text>
 
           <Text
-            size="2rem"
-            fw={700}
+            fw={800}
+            className="text-white text-3xl mt-2"
           >
             {totalProducts}
           </Text>
+
         </Card>
+
+        {/* TOTAL UNITS */}
 
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
+
+          <Text
+            size="sm"
+            className="text-gray-300"
+          >
             Total Units
           </Text>
 
           <Text
-            size="2rem"
-            fw={700}
+            fw={800}
+            className="text-white text-3xl mt-2"
           >
-            {totalUnits}
+            {Intl.NumberFormat(
+              "en"
+            ).format(totalUnits)}
           </Text>
+
         </Card>
+
+        {/* LOW STOCK */}
 
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-yellow-500/10 border border-yellow-500/20 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
+
+          <Text
+            size="sm"
+            className="text-yellow-100"
+          >
             Low Stock Products
           </Text>
 
           <Text
-            size="2rem"
-            fw={700}
+            fw={800}
+            className="text-yellow-300 text-3xl mt-2"
           >
             {lowStock.length}
           </Text>
+
         </Card>
+
+        {/* OUT OF STOCK */}
 
         <Card
           padding="lg"
           radius="xl"
-          className="bg-white/5 border border-white/10"
+          className="bg-red-500/10 border border-red-500/20 backdrop-blur-xl shadow-xl"
         >
-          <Text size="sm" c="dimmed">
+
+          <Text
+            size="sm"
+            className="text-red-100"
+          >
             Out of Stock
           </Text>
 
           <Text
-            size="2rem"
-            fw={700}
+            fw={800}
+            className="text-red-400 text-3xl mt-2"
           >
             {outOfStock}
           </Text>
+
         </Card>
 
       </SimpleGrid>
 
-      {/* LOW STOCK LIST */}
+      {/* ================= LOW STOCK LIST ================= */}
 
       <Card
         padding="lg"
         radius="xl"
-        className="bg-white/5 border border-white/10"
+        className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl"
       >
 
-        <div className="flex items-center justify-between mb-6">
+        {/* HEADER */}
 
-          <h2 className="text-xl font-semibold">
-            Low Stock Alerts
-          </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
 
-          <Badge color="red">
+          <div>
+
+            <h2 className="text-xl md:text-2xl font-semibold text-white">
+
+              Low Stock Alerts
+
+            </h2>
+
+            <p className="text-sm text-gray-400 mt-1">
+
+              Products that need restocking soon
+
+            </p>
+
+          </div>
+
+          <Badge
+            color="red"
+            size="lg"
+            radius="xl"
+          >
             {lowStock.length} Items
           </Badge>
 
         </div>
 
+        {/* EMPTY */}
+
         {lowStock.length === 0 ? (
 
-          <p className="text-gray-400">
-            No low stock products.
-          </p>
+          <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-6 text-center">
+
+            <p className="text-green-300 font-medium">
+
+              All inventory levels look good
+
+            </p>
+
+            <p className="text-sm text-gray-400 mt-2">
+
+              No low stock products detected.
+
+            </p>
+
+          </div>
 
         ) : (
 
           <div className="space-y-4">
 
-            {lowStock.map((product) => (
+            {lowStock.map(
+              (product) => (
 
-              <div
-                key={product.id}
-                className="flex items-center justify-between bg-white/5 border border-white/5 rounded-xl p-4"
-              >
+                <div
+                  key={product.id}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl bg-black/20 border border-white/10 p-5 hover:bg-white/[0.07] transition"
+                >
 
-                <div>
+                  {/* LEFT */}
 
-                  <h3 className="font-semibold">
-                    {product.name}
-                  </h3>
+                  <div>
 
-                  <p className="text-sm text-gray-400">
-                    {product.category}
-                  </p>
+                    <h3 className="font-semibold text-white text-lg">
+
+                      {product.name}
+
+                    </h3>
+
+                    <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-400">
+
+                      {product.category && (
+                        <span>
+                          Category:{" "}
+                          {
+                            product.category
+                          }
+                        </span>
+                      )}
+
+                      {product.sku && (
+                        <span>
+                          SKU:{" "}
+                          {product.sku}
+                        </span>
+                      )}
+
+                    </div>
+
+                  </div>
+
+                  {/* RIGHT */}
+
+                  <Badge
+                    color="red"
+                    size="lg"
+                    radius="xl"
+                    variant="filled"
+                  >
+
+                    {product.quantity} left
+
+                  </Badge>
 
                 </div>
 
-                <Badge color="red">
-
-                  {product.quantity} left
-
-                </Badge>
-
-              </div>
-
-            ))}
+              )
+            )}
 
           </div>
 

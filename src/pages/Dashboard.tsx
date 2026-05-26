@@ -106,7 +106,7 @@ export default function DashboardLayout() {
           </NavLink>
          {/* ORDERS */}
 <NavLink
-  to="/user/orders"
+  to="/orders"
   className={({ isActive }) =>
     `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
       isActive
