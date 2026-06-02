@@ -1,43 +1,55 @@
+// src/pages/stockmanager/InventoryPage.tsx
+
 import { useEffect, useState } from "react";
 
 import {
-  Table,
   Button,
-  Modal,
-  TextInput,
-  NumberInput,
   Loader,
-  Badge,
 } from "@mantine/core";
 
 import {
   fetchProducts,
   createProduct,
-  deleteProduct,
   updateProduct,
+  deleteProduct,
 } from "../../services/api";
 
-import type { Product } from "../../services/api";
+import type {
+  Product,
+} from "../../services/api";
+
+import InventoryStats from "../../components/Inventory/InventoryStats";
+
+import InventoryTable from "../../components/Inventory/InventoryTable";
+
+import ProductModal from "../../components/Inventory/ProductModal";
 
 export default function InventoryPage() {
+
   // ================= STATE ================= //
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] =
+    useState<Product[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
-  // CREATE MODAL
-  const [opened, setOpened] = useState(false);
+  const [search, setSearch] =
+    useState("");
 
-  // EDIT MODAL
+  const [opened, setOpened] =
+    useState(false);
+
   const [editOpened, setEditOpened] =
     useState(false);
 
   const [editingProduct, setEditingProduct] =
     useState<Product | null>(null);
 
-  // FORM
-  const [name, setName] = useState("");
+  // ================= FORM ================= //
+
+  const [name, setName] =
+    useState("");
 
   const [category, setCategory] =
     useState("");
@@ -48,38 +60,45 @@ export default function InventoryPage() {
   const [quantity, setQuantity] =
     useState(0);
 
+  const [unit, setUnit] =
+    useState("pcs");
+
   const [minimumStock, setMinimumStock] =
     useState(5);
 
   const [price, setPrice] =
     useState(0);
 
-  // ================= FETCH PRODUCTS ================= //
+  // ================= LOAD ================= //
 
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
+  const loadProducts =
+    async () => {
 
-      const data = await fetchProducts();
+      try {
 
-      setProducts(data || []);
+        setLoading(true);
 
-    } catch (error) {
+        const data =
+          await fetchProducts();
 
-      console.error(error);
+        setProducts(data || []);
 
-    } finally {
+      } catch (error) {
 
-      setLoading(false);
+        console.error(error);
 
-    }
-  };
+      } finally {
+
+        setLoading(false);
+
+      }
+    };
 
   useEffect(() => {
     loadProducts();
   }, []);
 
-  // ================= RESET FORM ================= //
+  // ================= RESET ================= //
 
   const resetForm = () => {
 
@@ -91,39 +110,45 @@ export default function InventoryPage() {
 
     setQuantity(0);
 
+    setUnit("pcs");
+
     setMinimumStock(5);
 
     setPrice(0);
   };
 
-  // ================= CREATE PRODUCT ================= //
+  // ================= CREATE ================= //
 
-  const handleCreate = async () => {
-    try {
+  const handleCreate =
+    async () => {
 
-      await createProduct({
-        name,
-        category,
-        origin,
-        quantity,
-        minimum_stock: minimumStock,
-        price,
-      });
+      try {
 
-      setOpened(false);
+        await createProduct({
+          name,
+          category,
+          origin,
+          quantity,
+          unit,
+          minimum_stock:
+            minimumStock,
+          price,
+        });
 
-      resetForm();
+        setOpened(false);
 
-      loadProducts();
+        resetForm();
 
-    } catch (error) {
+        loadProducts();
 
-      console.error(error);
+      } catch (error) {
 
-    }
-  };
+        console.error(error);
 
-  // ================= OPEN EDIT ================= //
+      }
+    };
+
+  // ================= EDIT ================= //
 
   const openEditModal = (
     product: Product
@@ -131,78 +156,111 @@ export default function InventoryPage() {
 
     setEditingProduct(product);
 
-    setName(product.name || "");
+    setName(product.name);
 
-    setCategory(product.category || "");
-
-    setOrigin(product.origin || "");
-
-    setQuantity(product.quantity || 0);
-
-    setMinimumStock(
-      product.minimum_stock || 5
+    setCategory(
+      product.category || ""
     );
 
-    setPrice(Number(product.price) || 0);
+    setOrigin(
+      product.origin || ""
+    );
+
+    setQuantity(
+      product.quantity
+    );
+
+    setUnit(
+      product.unit || "pcs"
+    );
+
+    setMinimumStock(
+      product.minimum_stock
+    );
+
+    setPrice(
+      Number(product.price) ||
+        0
+    );
 
     setEditOpened(true);
   };
 
-  // ================= UPDATE PRODUCT ================= //
+  const handleUpdate =
+    async () => {
 
-  const handleUpdate = async () => {
+      if (!editingProduct)
+        return;
 
-    if (!editingProduct) return;
+      try {
 
-    try {
+        await updateProduct(
+          editingProduct.id,
+          {
+            name,
+            category,
+            origin,
+            quantity,
+            unit,
+            minimum_stock:
+              minimumStock,
+            price,
+          }
+        );
 
-      await updateProduct(
-        editingProduct.id,
-        {
-          name,
-          category,
-          origin,
-          quantity,
-          minimum_stock: minimumStock,
-          price,
-        }
-      );
+        setEditOpened(false);
 
-      setEditOpened(false);
+        setEditingProduct(null);
 
-      setEditingProduct(null);
+        resetForm();
 
-      resetForm();
+        loadProducts();
 
-      loadProducts();
+      } catch (error) {
 
-    } catch (error) {
+        console.error(error);
 
-      console.error(error);
-
-    }
-  };
+      }
+    };
 
   // ================= DELETE ================= //
 
-  const handleDelete = async (
-    id: number
-  ) => {
+  const handleDelete =
+    async (
+      id: number
+    ) => {
 
-    try {
+      try {
 
-      await deleteProduct(id);
+        await deleteProduct(id);
 
-      loadProducts();
+        loadProducts();
 
-    } catch (error) {
+      } catch (error) {
 
-      console.error(error);
+        console.error(error);
 
-    }
-  };
+      }
+    };
 
-  // ================= UI ================= //
+  // ================= FILTER ================= //
+
+  const filteredProducts =
+    products.filter(
+      (product) =>
+        product.name
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          ) ||
+        product.sku
+          ?.toLowerCase()
+          .includes(
+            search.toLowerCase()
+          )
+    );
+
+  // ================= LOADING ================= //
 
   if (loading) {
     return (
@@ -212,311 +270,128 @@ export default function InventoryPage() {
     );
   }
 
+  // ================= UI ================= //
+
   return (
     <div className="space-y-6">
 
-      {/* ================= HEADER ================= */}
-
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
 
         <div>
 
           <h1 className="text-3xl font-bold text-white">
+
             Inventory
+
           </h1>
 
           <p className="text-gray-400">
+
             Manage products and stock
+
           </p>
 
         </div>
 
         <Button
-          onClick={() => setOpened(true)}
+          onClick={() =>
+            setOpened(true)
+          }
         >
           Add Product
         </Button>
 
       </div>
 
-      {/* ================= TABLE ================= */}
+      <InventoryStats
+        products={products}
+      />
 
-      <div className="rounded-2xl border border-white/10 overflow-hidden bg-[#13283D]">
+      <InventoryTable
+        products={
+          filteredProducts
+        }
+        search={search}
+        setSearch={setSearch}
+        onEdit={
+          openEditModal
+        }
+        onDelete={
+          handleDelete
+        }
+      />
 
-        <Table
-          verticalSpacing="md"
-          horizontalSpacing="lg"
-          className="text-white"
-        >
+      {/* CREATE */}
 
-          <Table.Thead className="bg-white/5">
-
-            <Table.Tr>
-
-              <Table.Th className="text-gray-300">
-                Name
-              </Table.Th>
-
-              <Table.Th className="text-gray-300">
-                Category
-              </Table.Th>
-
-              <Table.Th className="text-gray-300">
-                Origin
-              </Table.Th>
-
-              <Table.Th className="text-gray-300">
-                Quantity
-              </Table.Th>
-
-              <Table.Th className="text-gray-300">
-                Price
-              </Table.Th>
-
-              <Table.Th className="text-gray-300">
-                Status
-              </Table.Th>
-
-              <Table.Th className="text-gray-300">
-                Actions
-              </Table.Th>
-
-            </Table.Tr>
-
-          </Table.Thead>
-
-          <Table.Tbody>
-
-            {products.map((product) => {
-
-              const lowStock =
-                product.quantity <=
-                product.minimum_stock;
-
-              return (
-
-                <Table.Tr
-                  key={product.id}
-                  className="border-t border-white/5 hover:bg-white/5 transition"
-                >
-
-                  <Table.Td>
-                    {product.name}
-                  </Table.Td>
-
-                  <Table.Td className="text-gray-300">
-                    {product.category}
-                  </Table.Td>
-
-                  <Table.Td className="text-gray-300">
-                    {product.origin}
-                  </Table.Td>
-
-                  <Table.Td className="font-semibold">
-                    {product.quantity}
-                  </Table.Td>
-
-                  <Table.Td>
-                    ${product.price}
-                  </Table.Td>
-
-                  <Table.Td>
-
-                    {lowStock ? (
-
-                      <Badge color="red">
-                        Low Stock
-                      </Badge>
-
-                    ) : (
-
-                      <Badge color="green">
-                        In Stock
-                      </Badge>
-
-                    )}
-
-                  </Table.Td>
-
-                  <Table.Td>
-
-                    <div className="flex gap-2">
-
-                      <Button
-                        size="xs"
-                        variant="light"
-                        onClick={() =>
-                          openEditModal(product)
-                        }
-                      >
-                        Edit
-                      </Button>
-
-                      <Button
-                        color="red"
-                        size="xs"
-                        variant="light"
-                        onClick={() =>
-                          handleDelete(product.id)
-                        }
-                      >
-                        Delete
-                      </Button>
-
-                    </div>
-
-                  </Table.Td>
-
-                </Table.Tr>
-
-              );
-            })}
-
-          </Table.Tbody>
-
-        </Table>
-
-      </div>
-
-      {/* ================= CREATE MODAL ================= */}
-
-      <Modal
+      <ProductModal
         opened={opened}
-        onClose={() => setOpened(false)}
+        onClose={() =>
+          setOpened(false)
+        }
         title="Add Product"
-      >
+        submitLabel="Save Product"
+        onSubmit={
+          handleCreate
+        }
+        name={name}
+        setName={setName}
+        category={category}
+        setCategory={
+          setCategory
+        }
+        origin={origin}
+        setOrigin={setOrigin}
+        quantity={quantity}
+        setQuantity={
+          setQuantity
+        }
+        unit={unit}
+        setUnit={setUnit}
+        minimumStock={
+          minimumStock
+        }
+        setMinimumStock={
+          setMinimumStock
+        }
+        price={price}
+        setPrice={setPrice}
+      />
 
-        <div className="space-y-4">
+      {/* EDIT */}
 
-          <TextInput
-            label="Name"
-            value={name}
-            onChange={(e) =>
-              setName(e.currentTarget.value)
-            }
-          />
-
-          <TextInput
-            label="Category"
-            value={category}
-            onChange={(e) =>
-              setCategory(e.currentTarget.value)
-            }
-          />
-
-          <TextInput
-            label="Origin"
-            value={origin}
-            onChange={(e) =>
-              setOrigin(e.currentTarget.value)
-            }
-          />
-
-          <NumberInput
-            label="Quantity"
-            value={quantity}
-            onChange={(v) =>
-              setQuantity(Number(v))
-            }
-          />
-
-          <NumberInput
-            label="Minimum Stock"
-            value={minimumStock}
-            onChange={(v) =>
-              setMinimumStock(Number(v))
-            }
-          />
-
-          <NumberInput
-            label="Price"
-            value={price}
-            onChange={(v) =>
-              setPrice(Number(v))
-            }
-          />
-
-          <Button
-            fullWidth
-            onClick={handleCreate}
-          >
-            Save Product
-          </Button>
-
-        </div>
-
-      </Modal>
-
-      {/* ================= EDIT MODAL ================= */}
-
-      <Modal
+      <ProductModal
         opened={editOpened}
         onClose={() =>
           setEditOpened(false)
         }
         title="Edit Product"
-      >
-
-        <div className="space-y-4">
-
-          <TextInput
-            label="Name"
-            value={name}
-            onChange={(e) =>
-              setName(e.currentTarget.value)
-            }
-          />
-
-          <TextInput
-            label="Category"
-            value={category}
-            onChange={(e) =>
-              setCategory(e.currentTarget.value)
-            }
-          />
-
-          <TextInput
-            label="Origin"
-            value={origin}
-            onChange={(e) =>
-              setOrigin(e.currentTarget.value)
-            }
-          />
-
-          <NumberInput
-            label="Quantity"
-            value={quantity}
-            onChange={(v) =>
-              setQuantity(Number(v))
-            }
-          />
-
-          <NumberInput
-            label="Minimum Stock"
-            value={minimumStock}
-            onChange={(v) =>
-              setMinimumStock(Number(v))
-            }
-          />
-
-          <NumberInput
-            label="Price"
-            value={price}
-            onChange={(v) =>
-              setPrice(Number(v))
-            }
-          />
-
-          <Button
-            fullWidth
-            onClick={handleUpdate}
-          >
-            Update Product
-          </Button>
-
-        </div>
-
-      </Modal>
+        submitLabel="Update Product"
+        onSubmit={
+          handleUpdate
+        }
+        name={name}
+        setName={setName}
+        category={category}
+        setCategory={
+          setCategory
+        }
+        origin={origin}
+        setOrigin={setOrigin}
+        quantity={quantity}
+        setQuantity={
+          setQuantity
+        }
+        unit={unit}
+        setUnit={setUnit}
+        minimumStock={
+          minimumStock
+        }
+        setMinimumStock={
+          setMinimumStock
+        }
+        price={price}
+        setPrice={setPrice}
+      />
 
     </div>
   );

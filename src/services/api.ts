@@ -36,6 +36,8 @@ export interface Product {
 
   quantity: number;
 
+  unit: string;
+
   minimum_stock: number;
 
   price?: number;
