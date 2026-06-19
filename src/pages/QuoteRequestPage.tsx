@@ -20,7 +20,18 @@ import {
 } from "@mantine/core";
 
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import {
+  useState,
+} from "react";
+
+import PhoneField
+from "../components/PhoneField";
+
+import {
+isValidPhoneNumber,
+}
+from
+"react-phone-number-input";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
 
 import { submitQuoteRequest } from "../services/api";
@@ -55,7 +66,14 @@ export default function QuoteRequestPage() {
     useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [
+phoneError,
 
+setPhoneError
+]
+
+=
+useState("");
   const [signupPrefill, setSignupPrefill] =
     useState({
       name: "",
@@ -147,35 +165,30 @@ export default function QuoteRequestPage() {
       setLoading(true);
 
       // VALIDATION
+      if (!customer.name||!customer.phone) {
 
-      if (!customer.name || !customer.phone) {
-        notifications.show({
-          color: "yellow",
-          title: "Incomplete Form",
-          message:
-            "Please complete your customer information.",
-        });
-
-        return;
-      }
-
-      const hasInvalidItem = items.some(
-        (item) =>
-          !item.category ||
-          !item.unit ||
-          !item.quantity
-      );
-
-      if (hasInvalidItem) {
-        notifications.show({
-          color: "yellow",
-          title: "Missing Item Information",
-          message:
-            "Please complete all required item fields.",
-        });
-
-        return;
-      }
+notifications.show({
+color:"yellow",
+title:"Incomplete Form",
+message:"Please complete your customer information.",
+});
+return;
+}
+if (
+!isValidPhoneNumber(
+customer.phone
+)
+) {
+setPhoneError(
+"Please enter a valid phone number"
+);
+notifications.show({
+color:"red",
+title:"Invalid Phone Number",
+message:"Enter a valid international phone number.",
+});
+return;
+}
 
       // ================= FORMDATA ================= //
 
@@ -270,7 +283,15 @@ export default function QuoteRequestPage() {
         notes: "",
       });
 
-      setItems([{ ...emptyItem }]);
+      setItems([
+{
+...emptyItem
+}
+]);
+
+setPhoneError(
+""
+);
     } catch (err: any) {
       console.error(err);
 
@@ -345,17 +366,37 @@ export default function QuoteRequestPage() {
               }
             />
 
-            <TextInput
-              label="Phone Number"
-              required
-              value={customer.phone}
-              onChange={(e) =>
-                setCustomer({
-                  ...customer,
-                  phone: e.currentTarget.value,
-                })
+            <PhoneField
+              label="Phone Number"value={
+              customer.phone
               }
-            />
+              error={
+              phoneError
+              }
+              onChange={(
+              value
+              )=>{
+              setCustomer({
+              ...customer,
+              phone:
+              value
+              });
+              if (
+              phoneError &&
+              (
+              !value ||
+              isValidPhoneNumber(
+              value
+              )
+              )
+              ) {
+              setPhoneError(
+              ""
+              );
+              }
+
+              }}
+              />
 
             <TextInput
               label="Email"
@@ -579,7 +620,7 @@ export default function QuoteRequestPage() {
 
                   <FileInput
                     mt="md"
-                    label="Upload Second Reference Image"
+                    label="Upload Desired Finished Look"
                     accept="image/png,image/jpeg"
                     placeholder="Choose image"
                     value={item.design2}

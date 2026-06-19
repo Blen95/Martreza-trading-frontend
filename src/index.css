@@ -1,3 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* ================= PHONE INPUT ================= */
+
+.PhoneInput {
+  width: 100%;
+}
+
+.PhoneInputInput {
+  background: #1f2937 !important;
+
+  color: white !important;
+
+  border: 1px solid #374151 !important;
+
+  border-radius: 12px;
+
+  padding: 10px 14px;
+}
+
+.PhoneInputInput::placeholder {
+  color: #9ca3af;
+}
+
+/* COUNTRY SELECT */
+
+.PhoneInputCountrySelect {
+  background: #1f2937 !important;
+
+  color: white !important;
+
+  border: none !important;
+}
+
+/* DROPDOWN */
+
+.PhoneInputCountrySelect option {
+  background: #111827 !important;
+
+  color: white !important;
+}
+
+/* HOVER */
+
+.PhoneInputCountrySelect option:hover {
+  background: #0f2438 !important;
+}
+
+/* FOCUS */
+
+.PhoneInputInput:focus,
+.PhoneInputCountrySelect:focus {
+  outline: none;
+
+  border-color: #60a5fa !important;
+
+  box-shadow:
+    0 0 0 1px #60a5fa;
+}

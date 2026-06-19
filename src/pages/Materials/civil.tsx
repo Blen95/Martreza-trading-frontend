@@ -7,6 +7,7 @@ import cementImg from "../../assets/cement.jpeg";
 import steelImg from "../../assets/steel.jpeg";
 import concreteImg from "../../assets/concrete.jpeg";
 import waterproofImg from "../../assets/waterproof.jpeg";
+import QuoteButton from "../../components/QuoteButton";
 
 export default function CivilPage() {
   const [opened, setOpened] = useState(false);
@@ -77,7 +78,12 @@ export default function CivilPage() {
                   <Text className="text-gray-600">
                     {cat.desc}
                   </Text>
+                   <div className="mt-auto">
+                    <QuoteButton itemCategory={cat.title} />
+                      </div>
+                            
                 </div>
+                
               </motion.div>
             ))}
           </div>

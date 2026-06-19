@@ -12,6 +12,7 @@ import {
   ShoppingBag,
   Package,
   LogOut,
+  MessageSquare,
 } from "lucide-react";
 
 export function DashboardLayout() {
@@ -102,8 +103,9 @@ export function DashboardLayout() {
                 }
               >
                 <FileText size={18} />
-                Requests
+                Quote Requests
               </NavLink>
+              
 
               {/* ORDERS */}
 
@@ -120,7 +122,33 @@ export function DashboardLayout() {
                 <ShoppingBag size={18} />
                 Orders
               </NavLink>
+              <NavLink
+  to="/admin/project-requests"
+  className={({ isActive }) =>
+    `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+      isActive
+        ? "bg-white/10 text-white"
+        : "text-gray-400 hover:bg-white/5 hover:text-white"
+    }`
+  }
+>
+  <FileText size={18} />
+  Requests
+</NavLink>
 
+<NavLink
+  to="/admin/inquiries"
+  className={({ isActive }) =>
+    `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+      isActive
+        ? "bg-white/10 text-white"
+        : "text-gray-400 hover:bg-white/5 hover:text-white"
+    }`
+  }
+>
+  <MessageSquare size={18} />
+  Inquiries
+</NavLink>
             </>
           )}
 

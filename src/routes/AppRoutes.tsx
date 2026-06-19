@@ -55,6 +55,8 @@ import CustomerDashboard from "../pages/curstomer/CustomerDashboard";
 import CustomerRequestsPage from "../pages/curstomer/CustomerRequestsPage";
 
 import CustomerOrdersPage from "../pages/curstomer/CustomerOrdersPage";
+import InquiriesPage from "../pages/admin/InquiriesPage";
+import ProjectRequestsPage from "../pages/admin/ProjectRequestsPage";
 
 export default function AppRoutes() {
 
@@ -146,6 +148,19 @@ export default function AppRoutes() {
               <RequestsPage />
             }
           />
+          <Route
+path="/admin/project-requests"
+element={
+<ProjectRequestsPage />
+}
+/>
+
+<Route
+path="/admin/inquiries"
+element={
+<InquiriesPage />
+}
+/>
 
           <Route
             path="/admin/orders"

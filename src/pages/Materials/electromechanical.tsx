@@ -7,6 +7,7 @@ import cablesImg from "../../assets/cables.jpeg";
 import panelsImg from "../../assets/panels.jpeg";
 import hvacImg from "../../assets/hvac.jpeg";
 import fireImg from "../../assets/firealarm.jpeg";
+import QuoteButton from "../../components/QuoteButton";
 
 export default function ElectroPage() {
   const [opened, setOpened] = useState(false);
@@ -77,6 +78,9 @@ export default function ElectroPage() {
                   <Text className="text-gray-600">
                     {cat.desc}
                   </Text>
+                  <div className="mt-auto">
+                     <QuoteButton itemCategory={cat.title} />
+                   </div>
                 </div>
               </motion.div>
             ))}

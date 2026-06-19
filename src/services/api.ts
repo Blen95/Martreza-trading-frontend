@@ -371,4 +371,116 @@ export async function fetchLowStockProducts() {
 
   return res.data;
 }
+
+// ================= PROJECT REQUESTS ================= //
+
+export type RequestType =
+  | "sell_excess"
+  | "consultation"
+  | "procurement"
+  | "service";
+
+export interface ProjectRequestPayload {
+  full_name: string;
+
+  company_name?: string;
+
+  email: string;
+
+  phone: string;
+
+  request_type: RequestType;
+}
+
+export interface ProjectRequest {
+  id: number;
+
+  full_name: string;
+
+  company_name?: string;
+
+  email: string;
+
+  phone: string;
+
+  request_type: RequestType;
+
+  created_at: string;
+}
+
+export const submitProjectRequest =
+  async (
+    data: ProjectRequestPayload
+  ) => {
+    const response =
+      await API.post(
+        "/project-requests",
+        data
+      );
+
+    return response.data;
+  };
+
+export const fetchProjectRequests =
+  async (): Promise<ProjectRequest[]> => {
+    const response =
+      await API.get(
+        "/project-requests"
+      );
+
+    return response.data;
+  };
+
+
+// ================= CONTACT ================= //
+
+export interface ContactPayload {
+  full_name: string;
+
+  email: string;
+
+  phone?: string;
+
+  message: string;
+}
+
+export interface ContactMessage {
+  id: number;
+
+  full_name: string;
+
+  email: string;
+
+  phone?: string;
+
+  message: string;
+
+  created_at: string;
+}
+
+export const submitContact =
+  async (
+    data: ContactPayload
+  ) => {
+    const response =
+      await API.post(
+        "/contact",
+        data
+      );
+
+    return response.data;
+  };
+
+export const fetchContactMessages =
+  async (): Promise<
+    ContactMessage[]
+  > => {
+    const response =
+      await API.get(
+        "/contact"
+      );
+
+    return response.data;
+  };
+  
 export default API;
