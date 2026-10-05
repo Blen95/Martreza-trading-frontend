@@ -1,11 +1,10 @@
-import { Container, Text, Title, Anchor, Image } from '@mantine/core';
+import { Container, Text, Title, Anchor } from '@mantine/core';
 import {
   IconBrandFacebook,
   IconBrandInstagram,
   IconBrandTwitter,
   IconMapPin,
 } from '@tabler/icons-react';
-import logo from '../assets/leulumblack.png';
 
 export default function Footer() {
   return (
@@ -13,16 +12,30 @@ export default function Footer() {
       <Container size="lg">
         {/* Main Footer Content */}
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
-
+          
           {/* Left - Socials */}
           <div className="flex gap-4">
-            <Anchor href="#" target="_blank" className="hover:text-white transition-colors">
+            <Anchor
+              href="#"
+              target="_blank"
+              className="hover:text-white transition-colors"
+            >
               <IconBrandFacebook size={20} />
             </Anchor>
-            <Anchor href="#" target="_blank" className="hover:text-white transition-colors">
+
+            <Anchor
+              href="#"
+              target="_blank"
+              className="hover:text-white transition-colors"
+            >
               <IconBrandInstagram size={20} />
             </Anchor>
-            <Anchor href="#" target="_blank" className="hover:text-white transition-colors">
+
+            <Anchor
+              href="#"
+              target="_blank"
+              className="hover:text-white transition-colors"
+            >
               <IconBrandTwitter size={20} />
             </Anchor>
           </div>
@@ -47,11 +60,10 @@ export default function Footer() {
             </Anchor>
           </div>
 
-          {/* Right - Logo */}
-          <div>
-            <Image src={logo} alt="Logo" width={80} />
+          {/* Right - Text Logo */}
+          <div className="text-2xl font-semibold tracking-widest text-white uppercase">
+            martreza
           </div>
-
         </div>
 
         {/* Bottom Note */}

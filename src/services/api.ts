@@ -1,5 +1,3 @@
-// src/services/api.ts
-
 import axios from "axios";
 
 // ================= BASE SETUP ================= //
@@ -19,31 +17,21 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
+// ================= PRODUCT ================= //
+
 export interface Product {
   id: number;
-
   name: string;
-
   category?: string;
-
   description?: string;
-
   image?: string;
-
   origin?: string;
-
   sku?: string;
-
   quantity: number;
-
   unit: string;
-
   minimum_stock: number;
-
   price?: number;
-
   is_active: boolean;
-
   created_at?: string;
 }
 
@@ -61,6 +49,11 @@ export interface QuoteRequestItem {
   id?: number;
 
   category: string;
+
+  // New dynamic specification structure
+  specifications?: Record<string, string>;
+
+  // Keep these for compatibility with older requests
   brand?: string;
   size?: string;
 
@@ -81,16 +74,15 @@ export interface QuoteRequestPayload {
   phone: string;
   email?: string;
   company?: string;
+  notes?: string;
 
   items: {
     category: string;
-    brand?: string;
-    size?: string;
-
+    specifications?: Record<string, string>;
     unit: string;
     quantity: number;
-
     design?: File | null;
+    design2?: File | null;
   }[];
 }
 
@@ -102,7 +94,9 @@ export interface QuoteRequest {
   name: string;
   phone: string;
   email: string;
+
   company?: string;
+  notes?: string;
 
   status: Status;
 
@@ -117,6 +111,8 @@ export interface QuoteRequest {
   updated_at: string;
 
   items: QuoteRequestItem[];
+
+  order?: Order | null;
 }
 
 // ================= AUTH ================= //
@@ -130,7 +126,10 @@ export interface RegisterPayload {
 export const registerUser = async (
   data: RegisterPayload
 ) => {
-  const response = await API.post("/register", data);
+  const response = await API.post(
+    "/register",
+    data
+  );
 
   return response.data;
 };
@@ -139,6 +138,34 @@ export interface LoginPayload {
   email: string;
   password: string;
 }
+
+export const loginUser = async (
+  data: LoginPayload
+) => {
+  const response = await API.post(
+    "/login",
+    data
+  );
+
+  return response.data;
+};
+
+export const logoutUser = async () => {
+  const response = await API.post(
+    "/logout"
+  );
+
+  return response.data;
+};
+
+export const getUser = async () => {
+  const response = await API.get(
+    "/user"
+  );
+
+  return response.data;
+};
+
 // ================= ORDERS ================= //
 
 export type OrderStatus =
@@ -173,26 +200,6 @@ export interface Order {
   receipts?: Receipt[];
 }
 
-export const loginUser = async (
-  data: LoginPayload
-) => {
-  const response = await API.post("/login", data);
-
-  return response.data;
-};
-
-export const logoutUser = async () => {
-  const response = await API.post("/logout");
-
-  return response.data;
-};
-
-export const getUser = async () => {
-  const response = await API.get("/user");
-
-  return response.data;
-};
-
 // ================= QUOTE REQUEST ================= //
 
 export const submitQuoteRequest = async (
@@ -203,7 +210,8 @@ export const submitQuoteRequest = async (
     data,
     {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type":
+          "multipart/form-data",
       },
     }
   );
@@ -211,23 +219,21 @@ export const submitQuoteRequest = async (
   return response.data;
 };
 
-export const fetchQuoteRequests = async (): Promise<
-  QuoteRequest[]
-> => {
-  const response = await API.get("/quote-requests");
+export const fetchQuoteRequests =
+  async (): Promise<QuoteRequest[]> => {
+    const response = await API.get(
+      "/quote-requests"
+    );
 
-  return response.data.data;
-};
+    return response.data.data;
+  };
 
 // ================= ADMIN UPDATE ================= //
 
 export interface QuoteUpdatePayload {
   status: Status;
-
   quoted_price?: number;
-
   initial_payment?: number;
-
   estimated_arrival?: string;
 }
 
@@ -242,6 +248,7 @@ export const updateQuote = async (
 
   return response.data.data;
 };
+
 // ================= PLACE ORDER ================= //
 
 export const placeOrder = async (
@@ -255,7 +262,10 @@ export const placeOrder = async (
     String(quoteRequestId)
   );
 
-  formData.append("receipt", receipt);
+  formData.append(
+    "receipt",
+    receipt
+  );
 
   const response = await API.post(
     "/orders",
@@ -273,15 +283,14 @@ export const placeOrder = async (
 
 // ================= FETCH ORDERS ================= //
 
-export const fetchOrders = async (): Promise<
-  Order[]
-> => {
-  const response = await API.get(
-    "/orders"
-  );
+export const fetchOrders =
+  async (): Promise<Order[]> => {
+    const response = await API.get(
+      "/orders"
+    );
 
-  return response.data.data;
-};
+    return response.data.data;
+  };
 
 // ================= UPDATE ORDER STATUS ================= //
 
@@ -299,26 +308,39 @@ export const updateOrderStatus =
     return response.data.data;
   };
 
-  export async function fetchProducts() {
-  const token = localStorage.getItem("token");
+// ================= PRODUCTS ================= //
 
-  const res = await API.get("/products", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export async function fetchProducts() {
+  const token =
+    localStorage.getItem("token");
+
+  const res = await API.get(
+    "/products",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return res.data;
 }
 
-export async function createProduct(data: FormData | object) {
-  const token = localStorage.getItem("token");
+export async function createProduct(
+  data: FormData | object
+) {
+  const token =
+    localStorage.getItem("token");
 
-  const res = await API.post("/products", data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await API.post(
+    "/products",
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return res.data;
 }
@@ -327,7 +349,8 @@ export async function updateProduct(
   id: number,
   data: object
 ) {
-  const token = localStorage.getItem("token");
+  const token =
+    localStorage.getItem("token");
 
   const res = await API.put(
     `/products/${id}`,
@@ -342,8 +365,11 @@ export async function updateProduct(
   return res.data;
 }
 
-export async function deleteProduct(id: number) {
-  const token = localStorage.getItem("token");
+export async function deleteProduct(
+  id: number
+) {
+  const token =
+    localStorage.getItem("token");
 
   const res = await API.delete(
     `/products/${id}`,
@@ -358,7 +384,8 @@ export async function deleteProduct(id: number) {
 }
 
 export async function fetchLowStockProducts() {
-  const token = localStorage.getItem("token");
+  const token =
+    localStorage.getItem("token");
 
   const res = await API.get(
     "/products-low-stock",
@@ -382,29 +409,19 @@ export type RequestType =
 
 export interface ProjectRequestPayload {
   full_name: string;
-
   company_name?: string;
-
   email: string;
-
   phone: string;
-
   request_type: RequestType;
 }
 
 export interface ProjectRequest {
   id: number;
-
   full_name: string;
-
   company_name?: string;
-
   email: string;
-
   phone: string;
-
   request_type: RequestType;
-
   created_at: string;
 }
 
@@ -422,7 +439,9 @@ export const submitProjectRequest =
   };
 
 export const fetchProjectRequests =
-  async (): Promise<ProjectRequest[]> => {
+  async (): Promise<
+    ProjectRequest[]
+  > => {
     const response =
       await API.get(
         "/project-requests"
@@ -431,30 +450,21 @@ export const fetchProjectRequests =
     return response.data;
   };
 
-
 // ================= CONTACT ================= //
 
 export interface ContactPayload {
   full_name: string;
-
   email: string;
-
   phone?: string;
-
   message: string;
 }
 
 export interface ContactMessage {
   id: number;
-
   full_name: string;
-
   email: string;
-
   phone?: string;
-
   message: string;
-
   created_at: string;
 }
 
@@ -482,5 +492,5 @@ export const fetchContactMessages =
 
     return response.data;
   };
-  
+
 export default API;

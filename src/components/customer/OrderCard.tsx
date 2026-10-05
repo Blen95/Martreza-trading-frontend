@@ -1,5 +1,6 @@
 import type {
   Order,
+  QuoteRequestItem,
 } from "../../services/api";
 
 import {
@@ -15,20 +16,113 @@ interface Props {
 export default function OrderCard({
   order,
 }: Props) {
-
   const request =
     order.quote_request;
 
-  return (
+  const formatSpecificationLabel = (
+    key: string
+  ) => {
+    return key
+      .replace(/_/g, " ")
+      .replace(
+        /\b\w/g,
+        (char) =>
+          char.toUpperCase()
+      );
+  };
 
+  const renderSpecifications = (
+    item: QuoteRequestItem
+  ) => {
+    if (
+      item.specifications &&
+      Object.keys(
+        item.specifications
+      ).length > 0
+    ) {
+      return (
+        <div className="mt-4 rounded-xl bg-white/5 border border-white/10 p-4">
+          <p className="text-xs uppercase tracking-wider text-gray-500 mb-3">
+            Specifications
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {Object.entries(
+              item.specifications
+            ).map(
+              ([key, value]) => (
+                <div
+                  key={key}
+                  className="rounded-lg bg-black/20 p-3"
+                >
+                  <span className="text-xs text-gray-500">
+                    {formatSpecificationLabel(
+                      key
+                    )}
+                  </span>
+
+                  <p className="text-sm text-gray-300 mt-1">
+                    {value || "—"}
+                  </p>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Support old requests
+    if (
+      item.brand ||
+      item.size
+    ) {
+      return (
+        <div className="mt-4 rounded-xl bg-white/5 border border-white/10 p-4">
+          <p className="text-xs uppercase tracking-wider text-gray-500 mb-3">
+            Specifications
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {item.brand && (
+              <div className="rounded-lg bg-black/20 p-3">
+                <span className="text-xs text-gray-500">
+                  Brand
+                </span>
+
+                <p className="text-sm text-gray-300 mt-1">
+                  {item.brand}
+                </p>
+              </div>
+            )}
+
+            {item.size && (
+              <div className="rounded-lg bg-black/20 p-3">
+                <span className="text-xs text-gray-500">
+                  Size
+                </span>
+
+                <p className="text-sm text-gray-300 mt-1">
+                  {item.size}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  return (
     <div className="rounded-3xl bg-white/5 border border-white/10 p-4 md:p-6 backdrop-blur-xl">
 
-      {/* ================= HEADER ================= */}
+      {/* HEADER */}
 
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
 
         <div>
-
           <h2 className="text-xl md:text-2xl font-semibold">
             Order #{order.id}
           </h2>
@@ -39,7 +133,6 @@ export default function OrderCard({
               order.created_at
             ).toLocaleDateString()}
           </p>
-
         </div>
 
         <StatusBadge
@@ -48,108 +141,80 @@ export default function OrderCard({
 
       </div>
 
-      {/* ================= ITEMS ================= */}
+      {/* ITEMS */}
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5">
 
         {request?.items?.map(
           (item, index) => (
-
             <div
               key={index}
               className="rounded-2xl border border-white/10 overflow-hidden bg-black/20"
             >
 
-              {/* ================= IMAGES ================= */}
+              {/* IMAGES */}
 
               <div className="grid grid-cols-2 gap-1 bg-black/30">
 
-                {/* FIRST IMAGE */}
-
                 <div className="h-40 md:h-56">
-
                   {item.design_url ? (
-
                     <img
                       src={item.design_url}
                       alt={item.category}
                       className="w-full h-full object-cover"
                     />
-
                   ) : (
-
                     <div className="h-full flex items-center justify-center text-gray-500">
                       <ImageIcon />
                     </div>
-
                   )}
-
                 </div>
 
-                {/* SECOND IMAGE */}
-
                 <div className="h-40 md:h-56">
-
                   {item.design2_url ? (
-
                     <img
                       src={item.design2_url}
                       alt={`${item.category} second`}
                       className="w-full h-full object-cover"
                     />
-
                   ) : (
-
                     <div className="h-full flex items-center justify-center text-gray-500">
                       <ImageIcon />
                     </div>
-
                   )}
-
                 </div>
 
               </div>
 
-              {/* ================= CONTENT ================= */}
+              {/* CONTENT */}
 
-              <div className="p-5 space-y-2">
+              <div className="p-5">
 
                 <h3 className="font-semibold text-lg">
                   {item.category}
                 </h3>
 
-                {item.brand && (
-
-                  <p className="text-sm text-gray-300">
-                    Brand: {item.brand}
-                  </p>
-
+                {renderSpecifications(
+                  item
                 )}
 
-                {item.size && (
-
+                <div className="mt-4 pt-4 border-t border-white/10">
                   <p className="text-sm text-gray-300">
-                    Size: {item.size}
+                    Quantity:{" "}
+                    {item.quantity}{" "}
+                    {item.unit}
                   </p>
-
-                )}
-
-                <p className="text-sm text-gray-300">
-                  Quantity:{" "}
-                  {item.quantity}{" "}
-                  {item.unit}
-                </p>
+                </div>
 
               </div>
 
             </div>
-
           )
         )}
 
       </div>
 
-      {/* ================= QUOTE DETAILS ================= */}
+      {/* QUOTE DETAILS */}
 
       <div className="mt-6 rounded-2xl bg-green-500/10 border border-green-500/20 p-5">
 
@@ -160,20 +225,19 @@ export default function OrderCard({
         <div className="space-y-3 text-sm">
 
           <div className="flex justify-between">
-
             <span className="text-gray-400">
               Quoted Price
             </span>
 
             <span className="font-semibold">
               ETB{" "}
-              {request?.quoted_price}
+              {
+                request?.quoted_price
+              }
             </span>
-
           </div>
 
           <div className="flex justify-between">
-
             <span className="text-gray-400">
               Initial Payment
             </span>
@@ -184,11 +248,9 @@ export default function OrderCard({
                 request?.initial_payment
               }
             </span>
-
           </div>
 
           <div className="flex justify-between">
-
             <span className="text-gray-400">
               Estimated Arrival
             </span>
@@ -198,14 +260,12 @@ export default function OrderCard({
                 request?.estimated_arrival
               }
             </span>
-
           </div>
 
         </div>
-
       </div>
 
-      {/* ================= RECEIPTS ================= */}
+      {/* RECEIPTS */}
 
       <div className="mt-6 rounded-2xl bg-black/20 border border-white/10 p-5">
 
@@ -216,27 +276,27 @@ export default function OrderCard({
         {order.receipts &&
         order.receipts.length >
           0 ? (
-
           <div className="space-y-3">
 
             {order.receipts.map(
               (receipt) => (
-
                 <a
                   key={receipt.id}
-                  href={receipt.url}
+                  href={
+                    receipt.url
+                  }
                   target="_blank"
                   rel="noreferrer"
                   className="block rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"
                 >
-
                   <div className="flex justify-between items-center">
 
                     <div>
-
                       <p className="font-medium">
                         Receipt #
-                        {receipt.id}
+                        {
+                          receipt.id
+                        }
                       </p>
 
                       <p className="text-xs text-gray-400 mt-1">
@@ -245,24 +305,18 @@ export default function OrderCard({
                           receipt.status
                         }
                       </p>
-
                     </div>
 
                   </div>
-
                 </a>
-
               )
             )}
 
           </div>
-
         ) : (
-
           <div className="text-sm text-gray-400">
             No receipts uploaded yet.
           </div>
-
         )}
 
       </div>

@@ -108,7 +108,7 @@ export default function DashboardLayout() {
 <NavLink
   to="/orders"
   className={({ isActive }) =>
-    `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+    `flex items-center gap-3 px-3 py-2 rounded-2lg transition ${
       isActive
         ? "bg-white/10 text-white"
         : "text-gray-400 hover:bg-white/5 hover:text-white"

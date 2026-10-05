@@ -27,7 +27,7 @@ import type {
 
 import {
   Phone,
- Mail,
+  Mail,
   Pencil,
   Image as ImageIcon,
 } from "lucide-react";
@@ -79,11 +79,8 @@ export default function RequestsPage() {
 
   const [form, setForm] = useState({
     status: "pending" as Status,
-
     quoted_price: "",
-
     initial_payment: "",
-
     estimated_arrival: "",
   });
 
@@ -101,11 +98,9 @@ export default function RequestsPage() {
         ]);
 
         setRequests(requestsData);
-
         setRole(userData.role);
       } catch (err) {
         console.error(err);
-
         setError(
           "Failed to load requests"
         );
@@ -173,6 +168,107 @@ export default function RequestsPage() {
     ).toLocaleString();
   };
 
+  // ================= SPECIFICATIONS ================= //
+
+  const formatSpecificationLabel = (
+    key: string
+  ) => {
+    return key
+      .replace(/_/g, " ")
+      .replace(
+        /\b\w/g,
+        (char) =>
+          char.toUpperCase()
+      );
+  };
+
+  const renderSpecifications = (
+    item: QuoteRequestItem
+  ) => {
+    const specifications =
+      item.specifications;
+
+    // New structure
+    if (
+      specifications &&
+      Object.keys(specifications)
+        .length > 0
+    ) {
+      return (
+        <div className="mt-4 rounded-xl bg-white/5 border border-white/10 p-4">
+          <p className="text-xs uppercase tracking-wider text-gray-500 mb-3">
+            Specifications
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {Object.entries(
+              specifications
+            ).map(
+              ([key, value]) => (
+                <div
+                  key={key}
+                  className="flex flex-col rounded-lg bg-black/20 p-3"
+                >
+                  <span className="text-xs text-gray-500">
+                    {formatSpecificationLabel(
+                      key
+                    )}
+                  </span>
+
+                  <span className="text-sm text-gray-200 mt-1">
+                    {value || "—"}
+                  </span>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Compatibility with old requests
+    if (
+      item.brand ||
+      item.size
+    ) {
+      return (
+        <div className="mt-4 rounded-xl bg-white/5 border border-white/10 p-4">
+          <p className="text-xs uppercase tracking-wider text-gray-500 mb-3">
+            Specifications
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {item.brand && (
+              <div className="rounded-lg bg-black/20 p-3">
+                <span className="text-xs text-gray-500">
+                  Brand
+                </span>
+
+                <p className="text-sm text-gray-200 mt-1">
+                  {item.brand}
+                </p>
+              </div>
+            )}
+
+            {item.size && (
+              <div className="rounded-lg bg-black/20 p-3">
+                <span className="text-xs text-gray-500">
+                  Size
+                </span>
+
+                <p className="text-sm text-gray-200 mt-1">
+                  {item.size}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   // ================= UPDATE MODAL ================= //
 
   const openModal = (
@@ -204,7 +300,6 @@ export default function RequestsPage() {
     req: QuoteRequest
   ) => {
     setSelectedOrderRequest(req);
-
     setOrderModalOpened(true);
   };
 
@@ -384,6 +479,20 @@ export default function RequestsPage() {
                 </div>
               )}
 
+              {/* CUSTOMER NOTES */}
+
+              {req.notes && (
+                <div className="mt-4 rounded-xl bg-white/5 border border-white/10 p-4">
+                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-1">
+                    Customer Notes
+                  </p>
+
+                  <p className="text-sm text-gray-300">
+                    {req.notes}
+                  </p>
+                </div>
+              )}
+
               {/* ITEMS */}
 
               <div className="mt-6 grid md:grid-cols-2 gap-5">
@@ -399,8 +508,6 @@ export default function RequestsPage() {
                       {/* IMAGES */}
 
                       <div className="grid grid-cols-2 gap-1 bg-black/30">
-                        {/* FIRST IMAGE */}
-
                         <div className="h-56">
                           {item.design_url ? (
                             <img
@@ -418,8 +525,6 @@ export default function RequestsPage() {
                             </div>
                           )}
                         </div>
-
-                        {/* SECOND IMAGE */}
 
                         <div className="h-56">
                           {item.design2_url ? (
@@ -440,36 +545,26 @@ export default function RequestsPage() {
 
                       {/* CONTENT */}
 
-                      <div className="p-5 space-y-2">
+                      <div className="p-5">
                         <h3 className="font-semibold text-lg">
                           {
                             item.category
                           }
                         </h3>
 
-                        {item.brand && (
+                        {renderSpecifications(
+                          item
+                        )}
+
+                        <div className="mt-4 pt-4 border-t border-white/10">
                           <p className="text-sm text-gray-300">
-                            Brand:{" "}
+                            Quantity:{" "}
                             {
-                              item.brand
-                            }
+                              item.quantity
+                            }{" "}
+                            {item.unit}
                           </p>
-                        )}
-
-                        {item.size && (
-                          <p className="text-sm text-gray-300">
-                            Size:{" "}
-                            {item.size}
-                          </p>
-                        )}
-
-                        <p className="text-sm text-gray-300">
-                          Quantity:{" "}
-                          {
-                            item.quantity
-                          }{" "}
-                          {item.unit}
-                        </p>
+                        </div>
                       </div>
                     </div>
                   )
@@ -531,32 +626,35 @@ export default function RequestsPage() {
                       )}
                     </div>
 
-                    {/* PLACE ORDER BUTTON */}
+                    {!req.order ? (
+                      <Button
+                        mt="lg"
+                        fullWidth
+                        color="green"
+                        size="md"
+                        onClick={() =>
+                          openOrderModal(
+                            req
+                          )
+                        }
+                      >
+                        Place Order
+                      </Button>
+                    ) : (
+                      <div className="mt-4 rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 text-sm">
+                        <p className="font-semibold text-blue-300">
+                          Order Already
+                          Placed
+                        </p>
 
-                   {!req.order ? (
-  <Button
-    mt="lg"
-    fullWidth
-    color="green"
-    size="md"
-    onClick={() =>
-      openOrderModal(req)
-    }
-  >
-    Place Order
-  </Button>
-) : (
-  <div className="mt-4 rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 text-sm">
-    <p className="font-semibold text-blue-300">
-      Order Already Placed
-    </p>
-
-    <p className="text-gray-400 mt-1">
-      This quote request already has an
-      order attached.
-    </p>
-  </div>
-)}
+                        <p className="text-gray-400 mt-1">
+                          This quote
+                          request already
+                          has an order
+                          attached.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
